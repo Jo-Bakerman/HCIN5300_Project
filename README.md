@@ -1,4 +1,4 @@
-HCIN5300_Project
-================
+HCIN5300 Graduate Project
+=========================
 
-An AR Android Application using Vuforia SDK. 
+AR Android Application using Vuforia SDK.
