@@ -3,7 +3,7 @@
  All Rights Reserved.
  ==============================================================================*/
 
-package groupB.hcin5300.VuforiaSample.FrameMarkers;
+package groupB.hcin5300.VuforiaSample.app.FrameMarkers;
 
 import java.nio.Buffer;
 import groupB.hcin5300.SampleApplication.utils.MeshObject;
