@@ -48,11 +48,11 @@ public class ActivityLauncher extends ListActivity
         intent.putExtra("ABOUT_TEXT_TITLE", mActivities[position]);
         
         switch (position)
-        {
+        {          
             case 0:
                 intent.putExtra("ACTIVITY_TO_LAUNCH",
-                    "app.FrameMarkers.FrameMarkers");
-                intent.putExtra("ABOUT_TEXT", "FrameMarkers/FM_about.html");
+                    "app.VirtualButtons.VirtualButtons");
+                intent.putExtra("ABOUT_TEXT", "VirtualButtons/VB_about.html");
                 break;
         }
         

@@ -3,7 +3,7 @@
  All Rights Reserved.
  ==============================================================================*/
 
-package groupB.hcin5300.VuforiaSample.app.FrameMarkers;
+package groupB.hcin5300.VuforiaSample.app.VirtualButtons;
 
 import java.util.Vector;
 
@@ -28,12 +28,15 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.qualcomm.vuforia.CameraDevice;
-import com.qualcomm.vuforia.Marker;
-import com.qualcomm.vuforia.MarkerTracker;
+import com.qualcomm.vuforia.DataSet;
+import com.qualcomm.vuforia.ImageTarget;
+import com.qualcomm.vuforia.ImageTracker;
+import com.qualcomm.vuforia.Rectangle;
 import com.qualcomm.vuforia.State;
+import com.qualcomm.vuforia.Trackable;
 import com.qualcomm.vuforia.Tracker;
 import com.qualcomm.vuforia.TrackerManager;
-import com.qualcomm.vuforia.Vec2F;
+import com.qualcomm.vuforia.VirtualButton;
 import com.qualcomm.vuforia.Vuforia;
 import groupB.hcin5300.SampleApplication.SampleApplicationControl;
 import groupB.hcin5300.SampleApplication.SampleApplicationException;
@@ -47,11 +50,11 @@ import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenuGroup;
 import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenuInterface;
 
 
-// The main activity for the FrameMarkers sample. 
-public class FrameMarkers extends Activity implements SampleApplicationControl,
-    SampleAppMenuInterface
+// The main activity for the VirtualButtons sample. 
+public class VirtualButtons extends Activity implements
+    SampleApplicationControl, SampleAppMenuInterface
 {
-    private static final String LOGTAG = "FrameMarkers";
+    private static final String LOGTAG = "VirtualButtons";
     
     SampleApplicationSession vuforiaAppSession;
     
@@ -59,14 +62,9 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     private SampleApplicationGLView mGlView;
     
     // Our renderer:
-    private FrameMarkerRenderer mRenderer;
-    
-    // The textures we will use for rendering:
-    private Vector<Texture> mTextures;
+    private VirtualButtonRenderer mRenderer;
     
     private RelativeLayout mUILayout;
-    
-    private Marker dataSet[];
     
     private GestureDetector mGestureDetector;
     
@@ -74,12 +72,29 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     
     private boolean mFlash = false;
     private boolean mContAutofocus = false;
-    private boolean mIsFrontCameraActive = false;
     
     private View mFlashOptionView;
     
     private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(
         this);
+    
+    // The textures we will use for rendering:
+    private Vector<Texture> mTextures;
+    
+    private DataSet dataSet = null;
+    
+    // Virtual Button runtime creation:
+    private boolean updateBtns = false;
+    public String virtualButtonColors[] = { "red", "blue", "yellow", "green" };
+    
+    // Enumeration for masking button indices into single integer:
+    private static final int BUTTON_1 = 1;
+    private static final int BUTTON_2 = 2;
+    private static final int BUTTON_3 = 4;
+    private static final int BUTTON_4 = 8;
+    
+    private byte buttonMask = 0;
+    static final int NUM_BUTTONS = 4;
     
     boolean mIsDroidDevice = false;
     
@@ -99,11 +114,11 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         vuforiaAppSession
             .initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
-        mGestureDetector = new GestureDetector(this, new GestureListener());
-        
         // Load any sample specific textures:
         mTextures = new Vector<Texture>();
         loadTextures();
+        
+        mGestureDetector = new GestureDetector(this, new GestureListener());
         
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
             "droid");
@@ -150,14 +165,16 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     // for rendering.
     private void loadTextures()
     {
-        mTextures.add(Texture.loadTextureFromApk("FrameMarkers/letter_Q.png",
+        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png",
             getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("FrameMarkers/letter_C.png",
+        mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png",
             getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("FrameMarkers/letter_A.png",
+        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
             getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("FrameMarkers/letter_R.png",
-            getAssets()));
+        mTextures.add(Texture.loadTextureFromApk(
+            "VirtualButtons/TextureTeapotYellow.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk(
+            "VirtualButtons/TextureTeapotGreen.png", getAssets()));
     }
     
     
@@ -307,7 +324,7 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         mGlView = new SampleApplicationGLView(this);
         mGlView.init(translucent, depthSize, stencilSize);
         
-        mRenderer = new FrameMarkerRenderer(this, vuforiaAppSession);
+        mRenderer = new VirtualButtonRenderer(this, vuforiaAppSession);
         mRenderer.setTextures(mTextures);
         mGlView.setRenderer(mRenderer);
         
@@ -320,13 +337,11 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         // Indicate if the trackers were initialized correctly
         boolean result = true;
         
-        // Initialize the marker tracker:
-        TrackerManager trackerManager = TrackerManager.getInstance();
-        Tracker trackerBase = trackerManager.initTracker(MarkerTracker
-            .getClassType());
-        MarkerTracker markerTracker = (MarkerTracker) (trackerBase);
+        TrackerManager tManager = TrackerManager.getInstance();
+        Tracker tracker;
         
-        if (markerTracker == null)
+        tracker = tManager.initTracker(ImageTracker.getClassType());
+        if (tracker == null)
         {
             Log.e(
                 LOGTAG,
@@ -338,56 +353,6 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         }
         
         return result;
-        
-    }
-    
-    
-    @Override
-    public boolean doLoadTrackersData()
-    {
-        TrackerManager tManager = TrackerManager.getInstance();
-        MarkerTracker markerTracker = (MarkerTracker) tManager
-            .getTracker(MarkerTracker.getClassType());
-        if (markerTracker == null)
-            return false;
-        
-        dataSet = new Marker[4];
-        
-        dataSet[0] = markerTracker.createFrameMarker(0, "MarkerQ", new Vec2F(
-            50, 50));
-        if (dataSet[0] == null)
-        {
-            Log.e(LOGTAG, "Failed to create frame marker Q.");
-            return false;
-        }
-        
-        dataSet[1] = markerTracker.createFrameMarker(1, "MarkerC", new Vec2F(
-            50, 50));
-        if (dataSet[1] == null)
-        {
-            Log.e(LOGTAG, "Failed to create frame marker C.");
-            return false;
-        }
-        
-        dataSet[2] = markerTracker.createFrameMarker(2, "MarkerA", new Vec2F(
-            50, 50));
-        if (dataSet[2] == null)
-        {
-            Log.e(LOGTAG, "Failed to create frame marker A.");
-            return false;
-        }
-        
-        dataSet[3] = markerTracker.createFrameMarker(3, "MarkerR", new Vec2F(
-            50, 50));
-        if (dataSet[3] == null)
-        {
-            Log.e(LOGTAG, "Failed to create frame marker R.");
-            return false;
-        }
-        
-        Log.i(LOGTAG, "Successfully initialized MarkerTracker.");
-        
-        return true;
     }
     
     
@@ -397,11 +362,10 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         // Indicate if the trackers were started correctly
         boolean result = true;
         
-        TrackerManager tManager = TrackerManager.getInstance();
-        MarkerTracker markerTracker = (MarkerTracker) tManager
-            .getTracker(MarkerTracker.getClassType());
-        if (markerTracker != null)
-            markerTracker.start();
+        Tracker imageTracker = TrackerManager.getInstance().getTracker(
+            ImageTracker.getClassType());
+        if (imageTracker != null)
+            imageTracker.start();
         
         return result;
     }
@@ -413,11 +377,10 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         // Indicate if the trackers were stopped correctly
         boolean result = true;
         
-        TrackerManager tManager = TrackerManager.getInstance();
-        MarkerTracker markerTracker = (MarkerTracker) tManager
-            .getTracker(MarkerTracker.getClassType());
-        if (markerTracker != null)
-            markerTracker.stop();
+        Tracker imageTracker = TrackerManager.getInstance().getTracker(
+            ImageTracker.getClassType());
+        if (imageTracker != null)
+            imageTracker.stop();
         
         return result;
     }
@@ -428,6 +391,38 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     {
         // Indicate if the trackers were unloaded correctly
         boolean result = true;
+        
+        // Get the image tracker:
+        TrackerManager trackerManager = TrackerManager.getInstance();
+        ImageTracker imageTracker = (ImageTracker) trackerManager
+            .getTracker(ImageTracker.getClassType());
+        if (imageTracker == null)
+        {
+            Log.d(
+                LOGTAG,
+                "Failed to destroy the tracking data set because the ImageTracker has not been initialized.");
+            return false;
+        }
+        
+        if (dataSet != null)
+        {
+            if (!imageTracker.deactivateDataSet(dataSet))
+            {
+                Log.d(
+                    LOGTAG,
+                    "Failed to destroy the tracking data set because the data set could not be deactivated.");
+                result = false;
+            } else if (!imageTracker.destroyDataSet(dataSet))
+            {
+                Log.d(LOGTAG, "Failed to destroy the tracking data set.");
+                result = false;
+            }
+            
+            if (result)
+                Log.d(LOGTAG, "Successfully destroyed the data set.");
+            
+            dataSet = null;
+        }
         
         return result;
     }
@@ -440,7 +435,7 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         boolean result = true;
         
         TrackerManager tManager = TrackerManager.getInstance();
-        tManager.deinitTracker(MarkerTracker.getClassType());
+        tManager.deinitTracker(ImageTracker.getClassType());
         
         return result;
     }
@@ -489,7 +484,7 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
             else
                 Log.e(LOGTAG, "Unable to enable continuous autofocus");
             
-            mSampleAppMenu = new SampleAppMenu(this, this, "Frame Markers",
+            mSampleAppMenu = new SampleAppMenu(this, this, "Virtual Buttons",
                 mGlView, mUILayout, null);
             setSampleAppMenuSettings();
             
@@ -504,6 +499,170 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     @Override
     public void onQCARUpdate(State state)
     {
+        if (updateBtns)
+        {
+            // Update runs in the tracking thread therefore it is guaranteed
+            // that the tracker is
+            // not doing anything at this point. => Reconfiguration is possible.
+            
+            ImageTracker it = (ImageTracker) (TrackerManager.getInstance()
+                .getTracker(ImageTracker.getClassType()));
+            assert (dataSet != null);
+            
+            // Deactivate the data set prior to reconfiguration:
+            it.deactivateDataSet(dataSet);
+            
+            assert (dataSet.getNumTrackables() > 0);
+            Trackable trackable = dataSet.getTrackable(0);
+            
+            assert (trackable != null);
+            assert (trackable.getType() == ImageTracker.getClassType());
+            ImageTarget imageTarget = (ImageTarget) (trackable);
+            
+            if ((buttonMask & BUTTON_1) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 1");
+                
+                toggleVirtualButton(imageTarget, virtualButtonColors[0],
+                    -108.68f, -53.52f, -75.75f, -65.87f);
+                
+            }
+            if ((buttonMask & BUTTON_2) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 2");
+                
+                toggleVirtualButton(imageTarget, virtualButtonColors[1],
+                    -45.28f, -53.52f, -12.35f, -65.87f);
+            }
+            if ((buttonMask & BUTTON_3) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 3");
+                
+                toggleVirtualButton(imageTarget, virtualButtonColors[2],
+                    14.82f, -53.52f, 47.75f, -65.87f);
+            }
+            if ((buttonMask & BUTTON_4) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 4");
+                
+                toggleVirtualButton(imageTarget, virtualButtonColors[3],
+                    76.57f, -53.52f, 109.50f, -65.87f);
+            }
+            
+            // Reactivate the data set:
+            it.activateDataSet(dataSet);
+            
+            buttonMask = 0;
+            updateBtns = false;
+        }
+    }
+    
+    
+    // Create/destroy a Virtual Button at runtime
+    //
+    // Note: This will NOT work if the tracker is active!
+    boolean toggleVirtualButton(ImageTarget imageTarget, String name,
+        float left, float top, float right, float bottom)
+    {
+        Log.d(LOGTAG, "toggleVirtualButton");
+        
+        boolean buttonToggleSuccess = false;
+        
+        VirtualButton virtualButton = imageTarget.getVirtualButton(name);
+        if (virtualButton != null)
+        {
+            Log.d(LOGTAG, "Destroying Virtual Button> " + name);
+            buttonToggleSuccess = imageTarget
+                .destroyVirtualButton(virtualButton);
+        } else
+        {
+            Log.d(LOGTAG, "Creating Virtual Button> " + name);
+            Rectangle vbRectangle = new Rectangle(left, top, right, bottom);
+            VirtualButton virtualButton2 = imageTarget.createVirtualButton(
+                name, vbRectangle);
+            
+            if (virtualButton2 != null)
+            {
+                // This is just a showcase. The values used here a set by
+                // default on Virtual Button creation
+                virtualButton2.setEnabled(true);
+                virtualButton2.setSensitivity(VirtualButton.SENSITIVITY.MEDIUM);
+                buttonToggleSuccess = true;
+            }
+        }
+        
+        return buttonToggleSuccess;
+    }
+    
+    
+    private void addButtonToToggle(int virtualButtonIdx)
+    {
+        Log.d(LOGTAG, "addButtonToToggle");
+        
+        assert (virtualButtonIdx >= 0 && virtualButtonIdx < NUM_BUTTONS);
+        
+        switch (virtualButtonIdx)
+        {
+            case 0:
+                buttonMask |= BUTTON_1;
+                break;
+            
+            case 1:
+                buttonMask |= BUTTON_2;
+                break;
+            
+            case 2:
+                buttonMask |= BUTTON_3;
+                break;
+            
+            case 3:
+                buttonMask |= BUTTON_4;
+                break;
+        }
+        updateBtns = true;
+    }
+    
+    
+    @Override
+    public boolean doLoadTrackersData()
+    {
+        // Get the image tracker:
+        TrackerManager trackerManager = TrackerManager.getInstance();
+        ImageTracker imageTracker = (ImageTracker) (trackerManager
+            .getTracker(ImageTracker.getClassType()));
+        if (imageTracker == null)
+        {
+            Log.d(
+                LOGTAG,
+                "Failed to load tracking data set because the ImageTracker has not been initialized.");
+            return false;
+        }
+        
+        // Create the data set:
+        dataSet = imageTracker.createDataSet();
+        if (dataSet == null)
+        {
+            Log.d(LOGTAG, "Failed to create a new tracking data.");
+            return false;
+        }
+        
+        // Load the data set:
+        if (!dataSet.load("VirtualButtons/Wood.xml",
+            DataSet.STORAGE_TYPE.STORAGE_APPRESOURCE))
+        {
+            Log.d(LOGTAG, "Failed to load data set.");
+            return false;
+        }
+        
+        // Activate the data set:
+        if (!imageTracker.activateDataSet(dataSet))
+        {
+            Log.d(LOGTAG, "Failed to activate data set.");
+            return false;
+        }
+        
+        Log.d(LOGTAG, "Successfully loaded and activated data set.");
+        return true;
     }
     
     final public static int CMD_BACK = -1;
@@ -511,6 +670,10 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     final public static int CMD_FLASH = 2;
     final public static int CMD_CAMERA_FRONT = 3;
     final public static int CMD_CAMERA_REAR = 4;
+    final public static int CMD_BUTTON_RED = 5;
+    final public static int CMD_BUTTON_BLUE = 6;
+    final public static int CMD_BUTTON_YELLOW = 7;
+    final public static int CMD_BUTTON_GREEN = 8;
     
     
     // This method sets the menu's settings
@@ -548,6 +711,16 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
             group.addRadioItem(getString(R.string.menu_camera_back),
                 CMD_CAMERA_REAR, true);
         }
+        
+        group = mSampleAppMenu.addGroup("", true);
+        group.addSelectionItem(getString(R.string.menu_button_red),
+            CMD_BUTTON_RED, true);
+        group.addSelectionItem(getString(R.string.menu_button_blue),
+            CMD_BUTTON_BLUE, true);
+        group.addSelectionItem(getString(R.string.menu_button_yellow),
+            CMD_BUTTON_YELLOW, true);
+        group.addSelectionItem(getString(R.string.menu_button_green),
+            CMD_BUTTON_GREEN, true);
         
         mSampleAppMenu.attachMenu();
     }
@@ -645,7 +818,22 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
                     result = false;
                 }
                 doStartTrackers();
-                mIsFrontCameraActive = (command == CMD_CAMERA_FRONT);
+                break;
+            
+            case CMD_BUTTON_RED:
+                addButtonToToggle(0);
+                break;
+            
+            case CMD_BUTTON_BLUE:
+                addButtonToToggle(1);
+                break;
+            
+            case CMD_BUTTON_YELLOW:
+                addButtonToToggle(2);
+                break;
+            
+            case CMD_BUTTON_GREEN:
+                addButtonToToggle(3);
                 break;
         
         }
@@ -659,9 +847,4 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
     
-    
-    boolean isFrontCameraActive()
-    {
-        return mIsFrontCameraActive;
-    }
 }
