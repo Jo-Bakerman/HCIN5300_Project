@@ -524,29 +524,32 @@ public class VirtualButtons extends Activity implements
                 Log.d(LOGTAG, "Toggle Button 1");
                 
                 toggleVirtualButton(imageTarget, virtualButtonColors[0],
-                    -108.68f, -53.52f, -75.75f, -65.87f);
-                
+//                    -108.68f, -53.52f, -75.75f, -65.87f);
+                	  -6.5f, 27f, 6.4f, 13.5f);                              
             }
             if ((buttonMask & BUTTON_2) != 0)
             {
                 Log.d(LOGTAG, "Toggle Button 2");
                 
                 toggleVirtualButton(imageTarget, virtualButtonColors[1],
-                    -45.28f, -53.52f, -12.35f, -65.87f);
+//                    -45.28f, -53.52f, -12.35f, -65.87f);
+                		21.45f, 12.35f, 35.15f, -2.25f);             
             }
             if ((buttonMask & BUTTON_3) != 0)
             {
                 Log.d(LOGTAG, "Toggle Button 3");
                 
                 toggleVirtualButton(imageTarget, virtualButtonColors[2],
-                    14.82f, -53.52f, 47.75f, -65.87f);
+//                    14.82f, -53.52f, 47.75f, -65.87f);
+                		64.25f, 12.35f, 77.55f, -2.25f);
             }
             if ((buttonMask & BUTTON_4) != 0)
             {
                 Log.d(LOGTAG, "Toggle Button 4");
                 
                 toggleVirtualButton(imageTarget, virtualButtonColors[3],
-                    76.57f, -53.52f, 109.50f, -65.87f);
+//                    76.57f, -53.52f, 109.50f, -65.87f);
+                		64.25f, -3.15f, 77.55f, -16.95f);
             }
             
             // Reactivate the data set:
@@ -647,7 +650,7 @@ public class VirtualButtons extends Activity implements
         }
         
         // Load the data set:
-        if (!dataSet.load("VirtualButtons/Wood.xml",
+        if (!dataSet.load("VirtualButtons/HCIN5300_db.xml",
             DataSet.STORAGE_TYPE.STORAGE_APPRESOURCE))
         {
             Log.d(LOGTAG, "Failed to load data set.");

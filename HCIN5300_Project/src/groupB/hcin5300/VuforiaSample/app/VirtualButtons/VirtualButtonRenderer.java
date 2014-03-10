@@ -68,7 +68,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private int vbVertexHandle = 0;
     
     // Constants:
-    static private float kTeapotScale = 3.f;
+    static private float kTeapotScale = 1.f; //3.f;
     
     
     public VirtualButtonRenderer(VirtualButtons activity,
@@ -249,13 +249,17 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 Area vbArea = button.getArea();
                 assert (vbArea.getType() == Area.TYPE.RECTANGLE);
                 Rectangle vbRectangle[] = new Rectangle[4];
-                vbRectangle[0] = new Rectangle(-108.68f, -53.52f, -75.75f,
-                    -65.87f);
-                vbRectangle[1] = new Rectangle(-45.28f, -53.52f, -12.35f,
-                    -65.87f);
-                vbRectangle[2] = new Rectangle(14.82f, -53.52f, 47.75f, -65.87f);
-                vbRectangle[3] = new Rectangle(76.57f, -53.52f, 109.50f,
-                    -65.87f);
+//                vbRectangle[0] = new Rectangle(-108.68f, -53.52f, -75.75f,
+//                    -65.87f);
+//                vbRectangle[1] = new Rectangle(-45.28f, -53.52f, -12.35f,
+//                    -65.87f);
+//                vbRectangle[2] = new Rectangle(14.82f, -53.52f, 47.75f, -65.87f);
+//                vbRectangle[3] = new Rectangle(76.57f, -53.52f, 109.50f,
+//                    -65.87f);
+                vbRectangle[0] = new Rectangle(-6.5f, 27f, 6.4f, 13.5f);
+                vbRectangle[1] = new Rectangle(21.45f, 12.35f, 35.15f, -2.25f);
+                vbRectangle[2] = new Rectangle(64.25f, 12.35f, 77.55f, -2.25f);
+                vbRectangle[3] = new Rectangle(64.25f, -3.15f, 77.55f, -16.95f);
                 
                 // We add the vertices to a common array in order to have one
                 // single
