@@ -85,16 +85,16 @@ public class VirtualButtons extends Activity implements
     
     // Virtual Button runtime creation:
     private boolean updateBtns = false;
-    public String virtualButtonColors[] = { "red", "blue", "yellow", "green" };
+    public String virtualButtonColors[] = {"red", "blue"}; //{ "red", "blue", "yellow", "green" };
     
     // Enumeration for masking button indices into single integer:
     private static final int BUTTON_1 = 1;
     private static final int BUTTON_2 = 2;
-    private static final int BUTTON_3 = 4;
-    private static final int BUTTON_4 = 8;
+    //private static final int BUTTON_3 = 4;
+    //private static final int BUTTON_4 = 8;
     
     private byte buttonMask = 0;
-    static final int NUM_BUTTONS = 4;
+    static final int NUM_BUTTONS = 2; //4;
     
     boolean mIsDroidDevice = false;
     
@@ -173,10 +173,10 @@ public class VirtualButtons extends Activity implements
             getAssets()));
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
             getAssets()));
-        mTextures.add(Texture.loadTextureFromApk(
-            "VirtualButtons/TextureTeapotYellow.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk(
-            "VirtualButtons/TextureTeapotGreen.png", getAssets()));
+//        mTextures.add(Texture.loadTextureFromApk(
+//            "VirtualButtons/TextureTeapotYellow.png", getAssets()));
+//        mTextures.add(Texture.loadTextureFromApk(
+//            "VirtualButtons/TextureTeapotGreen.png", getAssets()));
     }
     
     
@@ -521,38 +521,38 @@ public class VirtualButtons extends Activity implements
             assert (trackable.getType() == ImageTracker.getClassType());
             ImageTarget imageTarget = (ImageTarget) (trackable);
             
-            if ((buttonMask & BUTTON_1) != 0)
+//            if ((buttonMask & BUTTON_1) != 0)
+//            {
+//                Log.d(LOGTAG, "Toggle Button 1");
+//                
+//                toggleVirtualButton(imageTarget, virtualButtonColors[0],
+////                    -108.68f, -53.52f, -75.75f, -65.87f);
+//                	  -6.5f, 27f, 6.4f, 13.5f);                              
+//            }
+            if ((buttonMask & BUTTON_1) != 0) //BUTTON_2) != 0)
             {
-                Log.d(LOGTAG, "Toggle Button 1");
+                Log.d(LOGTAG, "Toggle Button 1"); //"Toggle Button 2");
                 
-                toggleVirtualButton(imageTarget, virtualButtonColors[0],
-//                    -108.68f, -53.52f, -75.75f, -65.87f);
-                	  -6.5f, 27f, 6.4f, 13.5f);                              
-            }
-            if ((buttonMask & BUTTON_2) != 0)
-            {
-                Log.d(LOGTAG, "Toggle Button 2");
-                
-                toggleVirtualButton(imageTarget, virtualButtonColors[1],
+                toggleVirtualButton(imageTarget, virtualButtonColors[0], //[1],
 //                    -45.28f, -53.52f, -12.35f, -65.87f);
                 		21.45f, 12.35f, 35.15f, -2.25f);             
             }
-            if ((buttonMask & BUTTON_3) != 0)
+            if ((buttonMask & BUTTON_2) != 0) //BUTTON_3) != 0)
             {
-                Log.d(LOGTAG, "Toggle Button 3");
+                Log.d(LOGTAG, "Toggle Button 2"); //"Toggle Button 3");
                 
-                toggleVirtualButton(imageTarget, virtualButtonColors[2],
+                toggleVirtualButton(imageTarget, virtualButtonColors[1], //[2],
 //                    14.82f, -53.52f, 47.75f, -65.87f);
                 		64.25f, 12.35f, 77.55f, -2.25f);
             }
-            if ((buttonMask & BUTTON_4) != 0)
-            {
-                Log.d(LOGTAG, "Toggle Button 4");
-                
-                toggleVirtualButton(imageTarget, virtualButtonColors[3],
-//                    76.57f, -53.52f, 109.50f, -65.87f);
-                		64.25f, -3.15f, 77.55f, -16.95f);
-            }
+//            if ((buttonMask & BUTTON_4) != 0)
+//            {
+//                Log.d(LOGTAG, "Toggle Button 4");
+//                
+//                toggleVirtualButton(imageTarget, virtualButtonColors[3],
+////                    76.57f, -53.52f, 109.50f, -65.87f);
+//                		64.25f, -3.15f, 77.55f, -16.95f);
+//            }
             
             // Reactivate the data set:
             it.activateDataSet(dataSet);
@@ -616,13 +616,13 @@ public class VirtualButtons extends Activity implements
                 buttonMask |= BUTTON_2;
                 break;
             
-            case 2:
-                buttonMask |= BUTTON_3;
-                break;
-            
-            case 3:
-                buttonMask |= BUTTON_4;
-                break;
+//            case 2:
+//                buttonMask |= BUTTON_3;
+//                break;
+//            
+//            case 3:
+//                buttonMask |= BUTTON_4;
+//                break;
         }
         updateBtns = true;
     }
@@ -677,8 +677,8 @@ public class VirtualButtons extends Activity implements
     final public static int CMD_CAMERA_REAR = 4;
     final public static int CMD_BUTTON_RED = 5;
     final public static int CMD_BUTTON_BLUE = 6;
-    final public static int CMD_BUTTON_YELLOW = 7;
-    final public static int CMD_BUTTON_GREEN = 8;
+//    final public static int CMD_BUTTON_YELLOW = 7;
+//    final public static int CMD_BUTTON_GREEN = 8;
     
     
     // This method sets the menu's settings
@@ -722,10 +722,10 @@ public class VirtualButtons extends Activity implements
             CMD_BUTTON_RED, true);
         group.addSelectionItem(getString(R.string.menu_button_blue),
             CMD_BUTTON_BLUE, true);
-        group.addSelectionItem(getString(R.string.menu_button_yellow),
-            CMD_BUTTON_YELLOW, true);
-        group.addSelectionItem(getString(R.string.menu_button_green),
-            CMD_BUTTON_GREEN, true);
+//        group.addSelectionItem(getString(R.string.menu_button_yellow),
+//            CMD_BUTTON_YELLOW, true);
+//        group.addSelectionItem(getString(R.string.menu_button_green),
+//            CMD_BUTTON_GREEN, true);
         
         mSampleAppMenu.attachMenu();
     }
@@ -833,13 +833,13 @@ public class VirtualButtons extends Activity implements
                 addButtonToToggle(1);
                 break;
             
-            case CMD_BUTTON_YELLOW:
-                addButtonToToggle(2);
-                break;
-            
-            case CMD_BUTTON_GREEN:
-                addButtonToToggle(3);
-                break;
+//            case CMD_BUTTON_YELLOW:
+//                addButtonToToggle(2);
+//                break;
+//            
+//            case CMD_BUTTON_GREEN:
+//                addButtonToToggle(3);
+//                break;
         
         }
         

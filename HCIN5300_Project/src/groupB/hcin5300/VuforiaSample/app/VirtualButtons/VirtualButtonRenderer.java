@@ -70,7 +70,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private int vbVertexHandle = 0;
     
     // Constants:
-    static private float kTeapotScale = 3.f; //1.f;
+    static private float kTeapotScale = 6.f; //1.f;
     
     
     public VirtualButtonRenderer(VirtualButtons activity,
@@ -209,7 +209,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             // The image target specific result:
             assert (trackableResult.getType() == ImageTargetResult
                 .getClassType());
-            ImageTargetResult imageTargetResult = (ImageTargetResult) trackableResult;
+            ImageTargetResult imageTargetResult = (ImageTargetResult) trackableResult;                     
             
             // Set transformations:
             float[] modelViewProjection = new float[16];
@@ -250,7 +250,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 
                 Area vbArea = button.getArea();
                 assert (vbArea.getType() == Area.TYPE.RECTANGLE);
-                Rectangle vbRectangle[] = new Rectangle[4];
+                Rectangle vbRectangle[] = new Rectangle[2]; //new Rectangle[4];
 //                vbRectangle[0] = new Rectangle(-108.68f, -53.52f, -75.75f,
 //                    -65.87f);
 //                vbRectangle[1] = new Rectangle(-45.28f, -53.52f, -12.35f,
@@ -258,10 +258,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 //                vbRectangle[2] = new Rectangle(14.82f, -53.52f, 47.75f, -65.87f);
 //                vbRectangle[3] = new Rectangle(76.57f, -53.52f, 109.50f,
 //                    -65.87f);
-                vbRectangle[0] = new Rectangle(-6.5f, 27f, 6.4f, 13.5f);
-                vbRectangle[1] = new Rectangle(21.45f, 12.35f, 35.15f, -2.25f);
-                vbRectangle[2] = new Rectangle(64.25f, 12.35f, 77.55f, -2.25f);
-                vbRectangle[3] = new Rectangle(64.25f, -3.15f, 77.55f, -16.95f);
+//                vbRectangle[0] = new Rectangle(-6.5f, 27f, 6.4f, 13.5f);
+                vbRectangle[0] = new Rectangle(21.45f, 12.35f, 35.15f, -2.25f);
+//                vbRectangle[2] = new Rectangle(64.25f, 12.35f, 77.55f, -2.25f);
+                vbRectangle[1] = new Rectangle(64.25f, -3.15f, 77.55f, -16.95f);
                 
                 // We add the vertices to a common array in order to have one
                 // single
@@ -349,6 +349,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             Matrix.scaleM(modelViewScaled, 0, kTeapotScale, kTeapotScale,
                 kTeapotScale);
             
+          //translate to top
+            Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
+                    10.0f);
+            
             float[] modelViewProjectionScaled = new float[16];
             Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
                 .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
@@ -415,5 +419,4 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         mTextures = textures;
         
     }
-    
 }
