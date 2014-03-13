@@ -34,6 +34,7 @@ import groupB.hcin5300.SampleApplication.utils.CubeShaders;
 import groupB.hcin5300.SampleApplication.utils.LineShaders;
 import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
+import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 
 
@@ -49,7 +50,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     private Vector<Texture> mTextures;
     
-    private Teapot mTeapot = new Teapot();
+    //private Teapot mTeapot = new Teapot();
+    private Sphere mTeapot = new Sphere();
     
     // OpenGL ES 2.0 specific (3D model):
     private int shaderProgramID = 0;
@@ -68,7 +70,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private int vbVertexHandle = 0;
     
     // Constants:
-    static private float kTeapotScale = 1.f; //3.f;
+    static private float kTeapotScale = 3.f; //1.f;
     
     
     public VirtualButtonRenderer(VirtualButtons activity,
