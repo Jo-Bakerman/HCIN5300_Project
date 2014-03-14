@@ -32,6 +32,7 @@ import com.qualcomm.vuforia.Vuforia;
 import groupB.hcin5300.SampleApplication.SampleApplicationSession;
 import groupB.hcin5300.SampleApplication.utils.CubeShaders;
 import groupB.hcin5300.SampleApplication.utils.LineShaders;
+import groupB.hcin5300.SampleApplication.utils.MeshObject;
 import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
 import groupB.hcin5300.SampleApplication.utils.Sphere;
@@ -55,13 +56,23 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     //private Teapot mTeapot = new Teapot();
     //private Sphere mTeapot = new Sphere();
     
-    private Sphere redSphere = new Sphere();
-    private Sphere blueSphere = new Sphere();
-    Vector<Vector3D> translationM; //position of each sphere
-    Vector<Vector3D> scaleM; //scale metrics of each sphere
+    int activeElements = 2; // number of active elements on the table
+    public int maxLevels = 2; // level of element information   
     
-    // keep track of the last selected button
-    int visibleButtonIndx = -1;
+    // Ag information
+    Vector<MeshObject> AgObjs;
+    Vector<Vector3D> agTransl;
+    Vector<Vector3D> agScale;
+    public int agLevel = 1;
+    
+    // Pb information
+    Vector<MeshObject> PbObjs;
+    Vector<Vector3D> pbTransl;
+    Vector<Vector3D> pbScale;
+    public int pbLevel = 1;
+    
+    // keep track of the last selected element
+    public int visibleElementIndx = -1;
     
     // OpenGL ES 2.0 specific (3D model):
     private int shaderProgramID = 0;
@@ -88,21 +99,36 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     {
         mActivity = activity;
         vuforiaAppSession = session;
-        
-        translationM = new Vector<Vector3D>();
-        scaleM = new Vector<Vector3D>();
-        loadMatrixSpecs();
+              
+        loadElementSpecs();
     }
     
-    public void loadMatrixSpecs()
+    public void loadElementSpecs()
     {
-    	translationM.add(new Vector3D(-20.0f, 0.0f, 0.0f));
-    	translationM.add(new Vector3D(0.0f, 0.0f, 10.0f));
+    	AgObjs = new Vector<MeshObject>();
+    	AgObjs.add(new Sphere());
+    	AgObjs.add(new Sphere());
     	
-    	scaleM.add(new Vector3D(3.0f, 3.0f, 3.0f));
-    	scaleM.add(new Vector3D(6.0f, 6.0f, 6.0f));
+    	PbObjs = new Vector<MeshObject>();
+    	PbObjs.add(new Sphere());
+    	PbObjs.add(new Sphere());
+    	
+    	agTransl = new Vector<Vector3D>();
+    	pbTransl = new Vector<Vector3D>();
+    	
+        agScale = new Vector<Vector3D>();    
+        pbScale = new Vector<Vector3D>(); 
+        
+        agTransl.add(new Vector3D(-20.0f, 0.0f, 0.0f));
+        agTransl.add(new Vector3D(-10.0f, 0.0f, 0.0f));       
+        pbTransl.add(new Vector3D(0.0f, 0.0f, 10.0f));
+        pbTransl.add(new Vector3D(0.0f, 0.0f, 5.0f));
+    	
+        agScale.add(new Vector3D(3.0f, 3.0f, 3.0f));
+        agScale.add(new Vector3D(6.0f, 6.0f, 6.0f));
+        pbScale.add(new Vector3D(3.0f, 3.0f, 3.0f));
+        pbScale.add(new Vector3D(6.0f, 6.0f, 6.0f));
     }
-    
     
     // Called when the surface is created or recreated.
     @Override
@@ -260,7 +286,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 for (int j = 0; j < VirtualButtons.NUM_BUTTONS; ++j)
                 {
                     if (button.getName().compareTo(
-                        mActivity.virtualButtonColors[j]) == 0)
+                        mActivity.virtualButtonInfo[j]) == 0)
                     {
                         buttonIndex = j;
                         break;
@@ -270,24 +296,67 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 // If the button is pressed, than use this texture:
                 if (buttonResult.isPressed())
                 {
-                    textureIndex = buttonIndex;
-                    visibleButtonIndx = textureIndex;
+                	//textureIndex = buttonIndex;
+                	switch(buttonIndex)
+                	{
+                	case 0: // Ag
+                		textureIndex = calculateTextureIndx(buttonIndex, agLevel);
+                		visibleElementIndx = buttonIndex;
+                		break;
+                	case 1: // Pb
+                		textureIndex = calculateTextureIndx(buttonIndex, pbLevel);
+                		visibleElementIndx = buttonIndex;
+                		break;
+                	case 2: // Prev
+                		// make sure there is a previous level
+                		switch(visibleElementIndx)
+                		{
+                		case 0: // Ag
+                			if(agLevel > 1) 
+                			{
+                				--agLevel;
+                				--textureIndex;
+                			}
+                			break;
+                		case 1: // Pb
+                			if(pbLevel > 1)
+                			{
+                				--pbLevel;
+                				--textureIndex;
+                			}
+                			break;
+                		}
+                		break;
+                	case 3: // Next
+                		switch(visibleElementIndx)
+                		{
+                		case 0: // Ag
+                			if(agLevel < maxLevels) 
+                			{
+                				++agLevel;
+                				++textureIndex;
+                			}               			
+                			break;
+                		case 1: // Pb
+                			if(pbLevel < maxLevels) 
+                			{
+                				++pbLevel;
+                				++textureIndex;
+                			}
+                			break;
+                		}
+                		break;
+                	}
                 }
                 
                 Area vbArea = button.getArea();
                 assert (vbArea.getType() == Area.TYPE.RECTANGLE);
-                Rectangle vbRectangle[] = new Rectangle[2]; //new Rectangle[4];
-//                vbRectangle[0] = new Rectangle(-108.68f, -53.52f, -75.75f,
-//                    -65.87f);
-//                vbRectangle[1] = new Rectangle(-45.28f, -53.52f, -12.35f,
-//                    -65.87f);
-//                vbRectangle[2] = new Rectangle(14.82f, -53.52f, 47.75f, -65.87f);
-//                vbRectangle[3] = new Rectangle(76.57f, -53.52f, 109.50f,
-//                    -65.87f);
-//                vbRectangle[0] = new Rectangle(-6.5f, 27f, 6.4f, 13.5f);
+                Rectangle vbRectangle[] = new Rectangle[4];
+
                 vbRectangle[0] = new Rectangle(21.45f, 12.35f, 35.15f, -2.25f);
-//                vbRectangle[2] = new Rectangle(64.25f, 12.35f, 77.55f, -2.25f);
                 vbRectangle[1] = new Rectangle(64.25f, -3.15f, 77.55f, -16.95f);
+                vbRectangle[2] = new Rectangle(-70.0f, -30.0f, -56.7f, -43.8f);  
+                vbRectangle[3] = new Rectangle(-56.7f, -30.0f, -43.4f, -43.8f);
                 
                 // We add the vertices to a common array in order to have one
                 // single
@@ -378,15 +447,39 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     }
     
     private void Render3DModel(int textureIndex, float[] modelViewMatrix)
-    {             
-        if(visibleButtonIndx > -1)
+    {                
+        if(visibleElementIndx > -1)
         {
+        	Vector<MeshObject> currElement = new Vector<MeshObject>();
+        	Vector<Vector3D> elemTransls = new Vector<Vector3D>();
+        	Vector<Vector3D> elemScales = new Vector<Vector3D>();
+            int elemIndx = 0;
+        	
+        	switch(visibleElementIndx)
+        	{
+        	case 0: // Ag
+        		currElement = AgObjs;
+        		elemTransls = agTransl;
+        		elemScales = agScale;
+        		elemIndx = agLevel - 1;
+        		break;
+        	case 1: // Pb
+        		currElement = PbObjs;
+        		elemTransls = pbTransl;
+        		elemScales = pbScale;
+        		elemIndx = pbLevel - 1;
+        		break;
+        	}
+        	
+        	// get Object           
+            MeshObject mSphere = currElement.get(elemIndx);
+            		
         	// Assumptions:
             assert (textureIndex < mTextures.size());
         	Texture thisTexture = mTextures.get(textureIndex);
         	
-        	Vector3D getTranslate = translationM.get(visibleButtonIndx);
-        	Vector3D getScale = scaleM.get(visibleButtonIndx);      	       	
+        	Vector3D getTranslate = elemTransls.get(elemIndx);
+        	Vector3D getScale = elemScales.get(elemIndx);      	       	
             
             // Scale 3D model
             float[] modelViewScaled = modelViewMatrix;
@@ -404,8 +497,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             float[] modelViewProjectionScaled = new float[16];
             Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
                 .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
-            
-            Sphere mSphere = (visibleButtonIndx == 0 ? redSphere : blueSphere);
             
             // Render 3D model
             GLES20.glUseProgram(shaderProgramID);
@@ -463,7 +554,11 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     public void setTextures(Vector<Texture> textures)
     {
-        mTextures = textures;
-        
+        mTextures = textures;       
+    }
+    
+    public int calculateTextureIndx(int buttonIndx, int lvl)
+    {
+    	return (buttonIndx * maxLevels + lvl) - 1;
     }
 }
