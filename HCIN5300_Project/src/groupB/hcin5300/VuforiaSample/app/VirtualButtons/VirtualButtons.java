@@ -98,6 +98,9 @@ public class VirtualButtons extends Activity implements
     
     boolean mIsDroidDevice = false;
     
+    //
+    boolean buttonsEnabled = true;
+    
     
     // Called when the activity first starts or the user navigates back to an
     // activity.
@@ -166,17 +169,24 @@ public class VirtualButtons extends Activity implements
     private void loadTextures()
     {
         /*mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png",
-            getAssets()));*/
+            getAssets()));
     	mTextures.add(Texture.loadTextureFromApk("TextureSphereBrass.png",
                 getAssets()));
+        */
+    	mTextures.add(Texture.loadTextureFromApk("TextureSphereRed.png",
+                getAssets()));
+            mTextures.add(Texture.loadTextureFromApk("TextureSphereBlue.png",
+                getAssets()));
+    	/*
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png",
             getAssets()));
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
             getAssets()));
-//        mTextures.add(Texture.loadTextureFromApk(
-//            "VirtualButtons/TextureTeapotYellow.png", getAssets()));
-//        mTextures.add(Texture.loadTextureFromApk(
-//            "VirtualButtons/TextureTeapotGreen.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk(
+            "VirtualButtons/TextureTeapotYellow.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk(
+            "VirtualButtons/TextureTeapotGreen.png", getAssets()));
+    	 */
     }
     
     

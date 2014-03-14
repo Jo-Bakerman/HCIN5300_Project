@@ -36,6 +36,7 @@ import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
 import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Texture;
+import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
 
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
@@ -49,9 +50,18 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private VirtualButtons mActivity;
     
     private Vector<Texture> mTextures;
+    int textureIndex = 0;
     
     //private Teapot mTeapot = new Teapot();
-    private Sphere mTeapot = new Sphere();
+    //private Sphere mTeapot = new Sphere();
+    
+    private Sphere redSphere = new Sphere();
+    private Sphere blueSphere = new Sphere();
+    Vector<Vector3D> translationM; //position of each sphere
+    Vector<Vector3D> scaleM; //scale metrics of each sphere
+    
+    // keep track of the last selected button
+    int visibleButtonIndx = -1;
     
     // OpenGL ES 2.0 specific (3D model):
     private int shaderProgramID = 0;
@@ -70,7 +80,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private int vbVertexHandle = 0;
     
     // Constants:
-    static private float kTeapotScale = 6.f; //1.f;
+    //static private float kTeapotScale = 6.f; //1.f;
     
     
     public VirtualButtonRenderer(VirtualButtons activity,
@@ -78,6 +88,19 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     {
         mActivity = activity;
         vuforiaAppSession = session;
+        
+        translationM = new Vector<Vector3D>();
+        scaleM = new Vector<Vector3D>();
+        loadMatrixSpecs();
+    }
+    
+    public void loadMatrixSpecs()
+    {
+    	translationM.add(new Vector3D(-20.0f, 0.0f, 0.0f));
+    	translationM.add(new Vector3D(0.0f, 0.0f, 10.0f));
+    	
+    	scaleM.add(new Vector3D(3.0f, 3.0f, 3.0f));
+    	scaleM.add(new Vector3D(6.0f, 6.0f, 6.0f));
     }
     
     
@@ -167,7 +190,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         lineOpacityHandle = GLES20.glGetUniformLocation(vbShaderProgramID,
             "opacity");
         lineColorHandle = GLES20.glGetUniformLocation(vbShaderProgramID,
-            "color");
+            "color");     
     }
     
     
@@ -217,11 +240,12 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
             
             // Set the texture used for the teapot model:
-            int textureIndex = 0;
+            //int textureIndex = 0;
             
             float vbVertices[] = new float[imageTargetResult
                 .getNumVirtualButtons() * 24];
             short vbCounter = 0;
+            
             
             // Iterate through this targets virtual buttons:
             for (int i = 0; i < imageTargetResult.getNumVirtualButtons(); ++i)
@@ -231,6 +255,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 VirtualButton button = buttonResult.getVirtualButton();
                 
                 int buttonIndex = 0;
+                
                 // Run through button name array to find button index
                 for (int j = 0; j < VirtualButtons.NUM_BUTTONS; ++j)
                 {
@@ -245,7 +270,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 // If the button is pressed, than use this texture:
                 if (buttonResult.isPressed())
                 {
-                    textureIndex = buttonIndex + 1;
+                    textureIndex = buttonIndex;
+                    visibleButtonIndx = textureIndex;
                 }
                 
                 Area vbArea = button.getArea();
@@ -340,32 +366,59 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 GLES20.glDisableVertexAttribArray(vbVertexHandle);
             }
             
-            // Assumptions:
+            Render3DModel(textureIndex, modelViewMatrix);
+        
+            SampleUtils.checkGLError("VirtualButtons renderFrame");         
+        }
+        
+        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+        
+        Renderer.getInstance().end();
+        
+    }
+    
+    private void Render3DModel(int textureIndex, float[] modelViewMatrix)
+    {             
+        if(visibleButtonIndx > -1)
+        {
+        	// Assumptions:
             assert (textureIndex < mTextures.size());
-            Texture thisTexture = mTextures.get(textureIndex);
+        	Texture thisTexture = mTextures.get(textureIndex);
+        	
+        	Vector3D getTranslate = translationM.get(visibleButtonIndx);
+        	Vector3D getScale = scaleM.get(visibleButtonIndx);      	       	
             
             // Scale 3D model
             float[] modelViewScaled = modelViewMatrix;
-            Matrix.scaleM(modelViewScaled, 0, kTeapotScale, kTeapotScale,
-                kTeapotScale);
+//            Matrix.scaleM(modelViewScaled, 0, kTeapotScale, kTeapotScale,
+//                kTeapotScale);
+            Matrix.scaleM(modelViewScaled, 0, getScale.x, getScale.y,
+                    getScale.z);
             
           //translate to top
-            Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
-                    10.0f);
+//            Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
+//                    10.0f);
+            Matrix.translateM(modelViewMatrix, 0, getTranslate.x, getTranslate.y,
+                    getTranslate.z);
             
             float[] modelViewProjectionScaled = new float[16];
             Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
                 .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
             
+            Sphere mSphere = (visibleButtonIndx == 0 ? redSphere : blueSphere);
+            
             // Render 3D model
             GLES20.glUseProgram(shaderProgramID);
             
             GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                false, 0, mTeapot.getVertices());
+//                false, 0, mTeapot.getVertices());
+            		false, 0, mSphere.getVertices());
             GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
-                false, 0, mTeapot.getNormals());
+//                false, 0, mTeapot.getNormals());
+            		false, 0, mSphere.getNormals());
             GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
+//                GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
+            		GLES20.GL_FLOAT, false, 0, mSphere.getTexCoords());
             
             GLES20.glEnableVertexAttribArray(vertexHandle);
             GLES20.glEnableVertexAttribArray(normalHandle);
@@ -378,21 +431,15 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 modelViewProjectionScaled, 0);
             GLES20.glUniform1i(texSampler2DHandle, 0);
             GLES20.glDrawElements(GLES20.GL_TRIANGLES,
-                mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                mTeapot.getIndices());
+//                mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
+//                mTeapot.getIndices());
+            		mSphere.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
+                    mSphere.getIndices());
             
             GLES20.glDisableVertexAttribArray(vertexHandle);
             GLES20.glDisableVertexAttribArray(normalHandle);
             GLES20.glDisableVertexAttribArray(textureCoordHandle);
-            
-            SampleUtils.checkGLError("VirtualButtons renderFrame");
-            
-        }
-        
-        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        
-        Renderer.getInstance().end();
-        
+        }                     
     }
     
     
