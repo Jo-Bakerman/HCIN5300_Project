@@ -33,6 +33,7 @@ import groupB.hcin5300.SampleApplication.SampleApplicationSession;
 import groupB.hcin5300.SampleApplication.utils.CubeShaders;
 import groupB.hcin5300.SampleApplication.utils.LineShaders;
 import groupB.hcin5300.SampleApplication.utils.MeshObject;
+import groupB.hcin5300.SampleApplication.utils.RectCoords;
 import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
 import groupB.hcin5300.SampleApplication.utils.Sphere;
@@ -51,28 +52,28 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private VirtualButtons mActivity;
     
     private Vector<Texture> mTextures;
-    int textureIndex = 0;
+    
+    // virtual button coordinates
+    public static final int RECTCOUNT = 4;
+    public RectCoords agC = new RectCoords(21.45f, 12.35f, 35.15f, -2.25f);
+    public RectCoords pbC = new RectCoords(64.25f, -3.15f, 77.55f, -16.95f);
+    public RectCoords l1C = new RectCoords(-70f, -30f, -56.7f, -43.8f);
+    public RectCoords l2C = new RectCoords(-56.7f, -30f, -43.4f, -43.8f);
     
     //private Teapot mTeapot = new Teapot();
-    //private Sphere mTeapot = new Sphere();
+    //private Sphere mTeapot = new Sphere(); 
     
-    int activeElements = 2; // number of active elements on the table
-    public int maxLevels = 2; // level of element information   
+    public boolean elementSelected = false;
+    int elementIndex = -1;
+    int currLevel = 1;
     
-    // Ag information
-    Vector<MeshObject> AgObjs;
-    Vector<Vector3D> agTransl;
-    Vector<Vector3D> agScale;
-    public int agLevel = 1;
+    // Ag objects
+    MeshObject AgLvl1;
+    MeshObject AgLvl2;
     
-    // Pb information
-    Vector<MeshObject> PbObjs;
-    Vector<Vector3D> pbTransl;
-    Vector<Vector3D> pbScale;
-    public int pbLevel = 1;
-    
-    // keep track of the last selected element
-    public int visibleElementIndx = -1;
+    // Pb objects
+    MeshObject PbLvl1;
+    MeshObject PbLvl2; 
     
     // OpenGL ES 2.0 specific (3D model):
     private int shaderProgramID = 0;
@@ -105,29 +106,17 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     public void loadElementSpecs()
     {
-    	AgObjs = new Vector<MeshObject>();
-    	AgObjs.add(new Sphere());
-    	AgObjs.add(new Sphere());
+    	AgLvl1 = new Sphere();
+    	AgLvl2 = new Sphere();
     	
-    	PbObjs = new Vector<MeshObject>();
-    	PbObjs.add(new Sphere());
-    	PbObjs.add(new Sphere());
-    	
-    	agTransl = new Vector<Vector3D>();
-    	pbTransl = new Vector<Vector3D>();
-    	
-        agScale = new Vector<Vector3D>();    
-        pbScale = new Vector<Vector3D>(); 
-        
-        agTransl.add(new Vector3D(-20.0f, 0.0f, 0.0f));
-        agTransl.add(new Vector3D(-10.0f, 0.0f, 0.0f));       
-        pbTransl.add(new Vector3D(0.0f, 0.0f, 10.0f));
-        pbTransl.add(new Vector3D(0.0f, 0.0f, 5.0f));
-    	
-        agScale.add(new Vector3D(3.0f, 3.0f, 3.0f));
-        agScale.add(new Vector3D(6.0f, 6.0f, 6.0f));
-        pbScale.add(new Vector3D(3.0f, 3.0f, 3.0f));
-        pbScale.add(new Vector3D(6.0f, 6.0f, 6.0f));
+    	PbLvl1 = new Sphere();
+    	PbLvl2 = new Sphere();
+    	       
+//        pbTransl.add(new Vector3D(0.0f, 0.0f, 10.0f));
+//        pbTransl.add(new Vector3D(0.0f, 0.0f, 5.0f));
+
+//        pbScale.add(new Vector3D(3.0f, 3.0f, 3.0f));
+//        pbScale.add(new Vector3D(6.0f, 6.0f, 6.0f));
     }
     
     // Called when the surface is created or recreated.
@@ -300,63 +289,41 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 	switch(buttonIndex)
                 	{
                 	case 0: // Ag
-                		textureIndex = calculateTextureIndx(buttonIndex, agLevel);
-                		visibleElementIndx = buttonIndex;
+                		currLevel = 1;
+                		elementIndex = buttonIndex;
+                		elementSelected = true;
                 		break;
                 	case 1: // Pb
-                		textureIndex = calculateTextureIndx(buttonIndex, pbLevel);
-                		visibleElementIndx = buttonIndex;
+                		currLevel = 1;
+                		elementIndex = buttonIndex;
+                		elementSelected = true;
                 		break;
-                	case 2: // Prev
-                		// make sure there is a previous level
-                		switch(visibleElementIndx)
-                		{
-                		case 0: // Ag
-                			if(agLevel > 1) 
-                			{
-                				--agLevel;
-                				--textureIndex;
-                			}
-                			break;
-                		case 1: // Pb
-                			if(pbLevel > 1)
-                			{
-                				--pbLevel;
-                				--textureIndex;
-                			}
-                			break;
-                		}
+                	case 2: // level1
+                		currLevel = 1;
                 		break;
-                	case 3: // Next
-                		switch(visibleElementIndx)
-                		{
-                		case 0: // Ag
-                			if(agLevel < maxLevels) 
-                			{
-                				++agLevel;
-                				++textureIndex;
-                			}               			
-                			break;
-                		case 1: // Pb
-                			if(pbLevel < maxLevels) 
-                			{
-                				++pbLevel;
-                				++textureIndex;
-                			}
-                			break;
-                		}
+                	case 3: // level2
+                		currLevel = 2;
+                		break;
+                	case 4: // level3
+                		currLevel = 3;
+                		break;
+                	case 5: // level4
+                		currLevel = 4;
+                		break;
+                	case 6: // level5
+                		currLevel = 5;
                 		break;
                 	}
                 }
                 
                 Area vbArea = button.getArea();
                 assert (vbArea.getType() == Area.TYPE.RECTANGLE);
-                Rectangle vbRectangle[] = new Rectangle[4];
+                Rectangle vbRectangle[] = new Rectangle[RECTCOUNT];
 
-                vbRectangle[0] = new Rectangle(21.45f, 12.35f, 35.15f, -2.25f);
-                vbRectangle[1] = new Rectangle(64.25f, -3.15f, 77.55f, -16.95f);
-                vbRectangle[2] = new Rectangle(-70.0f, -30.0f, -56.7f, -43.8f);  
-                vbRectangle[3] = new Rectangle(-56.7f, -30.0f, -43.4f, -43.8f);
+                vbRectangle[0] = new Rectangle(agC.left, agC.top, agC.right, agC.bottom);
+                vbRectangle[1] = new Rectangle(pbC.left, pbC.top, pbC.right, pbC.bottom);
+                vbRectangle[2] = new Rectangle(l1C.left, l1C.top, l1C.right, l1C.bottom);  
+                vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
                 
                 // We add the vertices to a common array in order to have one
                 // single
@@ -435,7 +402,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 GLES20.glDisableVertexAttribArray(vbVertexHandle);
             }
             
-            Render3DModel(textureIndex, modelViewMatrix);
+            Render3DModel(modelViewMatrix);
         
             SampleUtils.checkGLError("VirtualButtons renderFrame");         
         }
@@ -446,70 +413,186 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         
     }
     
-    private void Render3DModel(int textureIndex, float[] modelViewMatrix)
-    {                
-        if(visibleElementIndx > -1)
-        {
-        	Vector<MeshObject> currElement = new Vector<MeshObject>();
-        	Vector<Vector3D> elemTransls = new Vector<Vector3D>();
-        	Vector<Vector3D> elemScales = new Vector<Vector3D>();
-            int elemIndx = 0;
-        	
-        	switch(visibleElementIndx)
-        	{
-        	case 0: // Ag
-        		currElement = AgObjs;
-        		elemTransls = agTransl;
-        		elemScales = agScale;
-        		elemIndx = agLevel - 1;
-        		break;
-        	case 1: // Pb
-        		currElement = PbObjs;
-        		elemTransls = pbTransl;
-        		elemScales = pbScale;
-        		elemIndx = pbLevel - 1;
-        		break;
-        	}
-        	
-        	// get Object           
-            MeshObject mSphere = currElement.get(elemIndx);
-            		
-        	// Assumptions:
-            assert (textureIndex < mTextures.size());
-        	Texture thisTexture = mTextures.get(textureIndex);
-        	
-        	Vector3D getTranslate = elemTransls.get(elemIndx);
-        	Vector3D getScale = elemScales.get(elemIndx);      	       	
+    private void Render3DModel(float[] modelViewMatrix)
+    {      
+    	if(elementSelected)
+    	{
+    		// an array of mesh objects to be rendered in the current level
+    		// and arrays of their translations and scales
+    		Vector<MeshObject> meshObjects = new Vector<MeshObject>();
+    		Vector<Texture> meshTextures = new Vector<Texture>();
+    		Vector<Vector3D> meshTransls = new Vector<Vector3D>();
+    		Vector<Vector3D> meshScales = new Vector<Vector3D>();
+    		
+    		// an array of text objects to be rendered in the current level
+    		// and arrays of their translations and scales
+    		/*
+    		Vector<textObject> textObjects = new Vector<textObject>();
+    		Vector<Texture> textTextures = new Vector<Texture>();
+    		Vector<Vector3D> textTransls = new Vector<Vector3D>();
+    		Vector<Vector3D> textScales = new Vector<Vector3D>();
+    		*/
+    		
+    		switch(currLevel)
+    		{
+    		case 1:
+    			if(elementIndex == 0) // Ag
+    			{
+    				// first Ag object in level 1
+    				meshObjects.add(AgLvl1);
+    				meshTextures.add(mTextures.get(0));
+    				meshTransls.add(new Vector3D(-20.0f, 0.0f, 0.0f));
+    				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
+    				
+    				// second Ag object in level 1...
+    			}
+    			else // Pb
+    			{
+    				// first Pb object in level 1
+    				meshObjects.add(PbLvl1);
+    				meshTextures.add(mTextures.get(2));
+    				meshTransls.add(new Vector3D(0.0f, 0.0f, 10.0f));
+    				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
+    				
+    				// second Pb object in level 1...
+    			}
+    			break;
+    		case 2:
+    			if(elementIndex == 0) // Ag
+    			{
+    				// first Ag object in level 2
+    				meshObjects.add(AgLvl2);
+    				meshTextures.add(mTextures.get(1));
+    				meshTransls.add(new Vector3D(-10.0f, 0.0f, 0.0f));
+    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+    			}
+    			else // Pb
+    			{
+    				// first Pb object in level 2
+    				meshObjects.add(PbLvl2);
+    				meshTextures.add(mTextures.get(3));
+    				meshTransls.add(new Vector3D(0.0f, 0.0f, 5.0f));
+    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));  				
+    			}
+    			break;
+    		case 3:
+    			if(elementIndex == 0) // Ag
+    			{
+    				
+    			}
+    			else // Pb
+    			{
+    				
+    			}
+    			break;
+    		case 4:
+    			if(elementIndex == 0) // Ag
+    			{
+    				
+    			}
+    			else // Pb
+    			{
+    				
+    			}
+    			break;
+    		case 5:
+    			if(elementIndex == 0) // Ag
+    			{
+    				
+    			}
+    			else // Pb
+    			{
+    				
+    			}
+    			break;
+    		}
+    		
+    		// Assumptions:
+            //assert (textureIndex < mTextures.size());
+            //Texture thisTexture = mTextures.get(textureIndex);
+    		
+    		float[] modelViewScaled = modelViewMatrix;
+    		
+    		// render mesh objects in the current level
+    		for(int i=0; i<meshObjects.size(); ++i)
+    		{   			
+    			Matrix.scaleM(modelViewScaled, 0, 
+    					meshScales.get(i).x, meshScales.get(i).y, meshScales.get(i).z);   			
+    			Matrix.translateM(modelViewMatrix, 0, 
+    					meshTransls.get(i).x, meshTransls.get(i).y, meshTransls.get(i).z);
+    			
+    			float[] modelViewProjectionScaled = new float[16];
+                Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
+                    .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
+                
+                // Render 3D Model
+                GLES20.glUseProgram(shaderProgramID);       
+                
+                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                	false, 0, meshObjects.get(i).getVertices());
+                GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
+                	false, 0, meshObjects.get(i).getNormals());
+                GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                	GLES20.GL_FLOAT, false, 0, meshObjects.get(i).getTexCoords());
+                
+                GLES20.glEnableVertexAttribArray(vertexHandle);
+                GLES20.glEnableVertexAttribArray(normalHandle);
+                GLES20.glEnableVertexAttribArray(textureCoordHandle);
+                
+                GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
+                    meshTextures.get(i).mTextureID[0]);
+                GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
+                    modelViewProjectionScaled, 0);
+                GLES20.glUniform1i(texSampler2DHandle, 0);
+                GLES20.glDrawElements(GLES20.GL_TRIANGLES,
+                	meshObjects.get(i).getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
+                    meshObjects.get(i).getIndices());
+                
+                GLES20.glDisableVertexAttribArray(vertexHandle);
+                GLES20.glDisableVertexAttribArray(normalHandle);
+                GLES20.glDisableVertexAttribArray(textureCoordHandle);   			
+    			
+    			Matrix.translateM(modelViewMatrix, 0, 
+    					-meshTransls.get(i).x, -meshTransls.get(i).y, -meshTransls.get(i).z);
+    			Matrix.scaleM(modelViewScaled, 0, 
+    					-meshScales.get(i).x, -meshScales.get(i).y, -meshScales.get(i).z);
+    		}
+    		
+    		// render text objects in the current level
+    		/*
+    		for(int k=0; k<textObjects.size; ++k)
+    		{
+    			
+    		}
+    		*/
+    	}
+    	
+    	     	       	
             
+    		/*
             // Scale 3D model
             float[] modelViewScaled = modelViewMatrix;
-//            Matrix.scaleM(modelViewScaled, 0, kTeapotScale, kTeapotScale,
-//                kTeapotScale);
-            Matrix.scaleM(modelViewScaled, 0, getScale.x, getScale.y,
-                    getScale.z);
+            Matrix.scaleM(modelViewScaled, 0, kTeapotScale, kTeapotScale,
+            kTeapotScale);
             
-          //translate to top
-//            Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
-//                    10.0f);
-            Matrix.translateM(modelViewMatrix, 0, getTranslate.x, getTranslate.y,
-                    getTranslate.z);
+            // translate 3D model
+            Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f, 10.0f);
             
             float[] modelViewProjectionScaled = new float[16];
             Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
                 .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
             
+            
             // Render 3D model
             GLES20.glUseProgram(shaderProgramID);
             
             GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-//                false, 0, mTeapot.getVertices());
-            		false, 0, mSphere.getVertices());
+                false, 0, mTeapot.getVertices());
             GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
-//                false, 0, mTeapot.getNormals());
-            		false, 0, mSphere.getNormals());
+                false, 0, mTeapot.getNormals());
             GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-//                GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
-            		GLES20.GL_FLOAT, false, 0, mSphere.getTexCoords());
+                GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
             
             GLES20.glEnableVertexAttribArray(vertexHandle);
             GLES20.glEnableVertexAttribArray(normalHandle);
@@ -522,15 +605,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 modelViewProjectionScaled, 0);
             GLES20.glUniform1i(texSampler2DHandle, 0);
             GLES20.glDrawElements(GLES20.GL_TRIANGLES,
-//                mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-//                mTeapot.getIndices());
-            		mSphere.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                    mSphere.getIndices());
+                mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
+                mTeapot.getIndices());
             
             GLES20.glDisableVertexAttribArray(vertexHandle);
             GLES20.glDisableVertexAttribArray(normalHandle);
-            GLES20.glDisableVertexAttribArray(textureCoordHandle);
-        }                     
+            GLES20.glDisableVertexAttribArray(textureCoordHandle); 
+            */                          
     }
     
     
@@ -547,18 +628,11 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             bb.putFloat(d);
         bb.rewind();
         
-        return bb;
-        
-    }
-    
+        return bb;      
+    }   
     
     public void setTextures(Vector<Texture> textures)
     {
         mTextures = textures;       
-    }
-    
-    public int calculateTextureIndx(int buttonIndx, int lvl)
-    {
-    	return (buttonIndx * maxLevels + lvl) - 1;
     }
 }

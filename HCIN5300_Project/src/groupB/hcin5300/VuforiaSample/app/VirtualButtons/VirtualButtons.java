@@ -85,7 +85,7 @@ public class VirtualButtons extends Activity implements
     
     // Virtual Button runtime creation:
     private boolean updateBtns = false;
-    public String virtualButtonInfo[] = {"Ag", "Pb", "Prev", "Next"}; //{ "red", "blue", "yellow", "green" };
+    public String virtualButtonInfo[] = {"Ag", "Pb", "Overview", "Characteristics"}; //{ "red", "blue", "yellow", "green" };
     
     // Enumeration for masking button indices into single integer:
     private static final int BUTTON_1 = 1;
@@ -164,28 +164,17 @@ public class VirtualButtons extends Activity implements
     // for rendering.
     private void loadTextures()
     {
-        /*mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png",
-            getAssets()));
-            */
     	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereBrass.png",
-                getAssets()));
+                getAssets())); // 0 
         
     	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereRed.png",
-                getAssets()));
-            mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
-                getAssets()));
-            mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereGreen.png",
-                    getAssets()));
-    	/*
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png",
-            getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
-            getAssets()));
-        mTextures.add(Texture.loadTextureFromApk(
-            "VirtualButtons/TextureTeapotYellow.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk(
-            "VirtualButtons/TextureTeapotGreen.png", getAssets()));
-    	 */
+                getAssets())); // 1
+    	
+        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
+                getAssets())); // 2
+        
+       mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereGreen.png",
+                getAssets())); // 3
     }
     
     
@@ -535,29 +524,33 @@ public class VirtualButtons extends Activity implements
                 Log.d(LOGTAG, "Toggle Button 1 - Ag"); 
                 
                 toggleVirtualButton(imageTarget, virtualButtonInfo[0], 
-                		21.45f, 12.35f, 35.15f, -2.25f);             
+                		mRenderer.agC.left, mRenderer.agC.top, 
+                		mRenderer.agC.right, mRenderer.agC.bottom);             
             }
             if ((buttonMask & BUTTON_2) != 0) 
             {
                 Log.d(LOGTAG, "Toggle Button 2 - Pb"); 
                 
                 toggleVirtualButton(imageTarget, virtualButtonInfo[1], 
-                		64.25f, 12.35f, 77.55f, -2.25f);
+                		mRenderer.pbC.left, mRenderer.pbC.top, 
+                		mRenderer.pbC.right, mRenderer.pbC.bottom);
             }
             
             if ((buttonMask & BUTTON_3) != 0)
             {
-                Log.d(LOGTAG, "Toggle Button 3 - Prev");
+                Log.d(LOGTAG, "Toggle Button 3 - " + virtualButtonInfo[2]);
                 
                 toggleVirtualButton(imageTarget, virtualButtonInfo[2],
-                		-70.0f, -30.0f, -56.7f, -43.8f);                              
+                		mRenderer.l1C.left, mRenderer.l1C.top, 
+                		mRenderer.l1C.right, mRenderer.l1C.bottom);                              
             }
             if ((buttonMask & BUTTON_4) != 0)
             {
-                Log.d(LOGTAG, "Toggle Button 4 - Next");
+                Log.d(LOGTAG, "Toggle Button 4 - " + virtualButtonInfo[3]);
                 
                 toggleVirtualButton(imageTarget, virtualButtonInfo[3],
-                		-56.7f, -30.0f, -43.4f, -43.8f);                          
+                		mRenderer.l2C.left, mRenderer.l2C.top, 
+                		mRenderer.l2C.right, mRenderer.l2C.bottom);                          
             }
             
             // Reactivate the data set:
@@ -683,8 +676,8 @@ public class VirtualButtons extends Activity implements
     final public static int CMD_CAMERA_REAR = 4;
     final public static int CMD_BUTTON_Ag = 5;
     final public static int CMD_BUTTON_Pb = 6;
-    final public static int CMD_BUTTON_PREV = 7;
-    final public static int CMD_BUTTON_NEXT = 8;
+    final public static int CMD_BUTTON_LEVEL1 = 7;
+    final public static int CMD_BUTTON_LEVEL2 = 8;
 //    final public static int CMD_BUTTON_RED = 5;
 //    final public static int CMD_BUTTON_BLUE = 6;
 //    final public static int CMD_BUTTON_YELLOW = 7;
@@ -732,10 +725,10 @@ public class VirtualButtons extends Activity implements
                 CMD_BUTTON_Ag, true);
             group.addSelectionItem(getString(R.string.menu_button_pb),
                 CMD_BUTTON_Pb, true);
-        group.addSelectionItem(getString(R.string.menu_button_prev),
-                    CMD_BUTTON_Ag, true);
-                group.addSelectionItem(getString(R.string.menu_button_next),
-                    CMD_BUTTON_Pb, true);
+        group.addSelectionItem(getString(R.string.menu_button_level1),
+                    CMD_BUTTON_LEVEL1, true);
+                group.addSelectionItem(getString(R.string.menu_button_level2),
+                    CMD_BUTTON_LEVEL2, true);
 //        group.addSelectionItem(getString(R.string.menu_button_red),
 //            CMD_BUTTON_RED, true);
 //        group.addSelectionItem(getString(R.string.menu_button_blue),
@@ -851,11 +844,11 @@ public class VirtualButtons extends Activity implements
                 addButtonToToggle(1);
                 break;
                 
-            case CMD_BUTTON_PREV:
+            case CMD_BUTTON_LEVEL1:
                 addButtonToToggle(2);
                 break;
             
-            case CMD_BUTTON_NEXT:
+            case CMD_BUTTON_LEVEL2:
                 addButtonToToggle(3);
                 break;
             

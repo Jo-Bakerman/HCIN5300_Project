@@ -53,8 +53,8 @@
     <string name="menu_button_green">Green</string>
     <string name="menu_button_ag">Ag</string>
     <string name="menu_button_pb">Pb</string>
-    <string name="menu_button_prev">Prev</string>
-    <string name="menu_button_next">Next</string>
+    <string name="menu_button_level1">Prev</string>
+    <string name="menu_button_level2">Next</string>
         
     <string name="splash_screen_description">Vuforia Splash</string>
     
