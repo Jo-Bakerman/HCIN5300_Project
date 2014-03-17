@@ -33,6 +33,7 @@ import groupB.hcin5300.SampleApplication.SampleApplicationSession;
 import groupB.hcin5300.SampleApplication.utils.CubeShaders;
 import groupB.hcin5300.SampleApplication.utils.LineShaders;
 import groupB.hcin5300.SampleApplication.utils.MeshObject;
+import groupB.hcin5300.SampleApplication.utils.Plane;
 import groupB.hcin5300.SampleApplication.utils.RectCoords;
 import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
@@ -55,6 +56,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     // virtual button coordinates
     public static final int RECTCOUNT = 7;
+    Rectangle vbRectangle[] = new Rectangle[RECTCOUNT];
     public RectCoords agC = new RectCoords(21.45f, 12.35f, 35.15f, -2.25f);
     public RectCoords pbC = new RectCoords(64.25f, -3.15f, 77.55f, -16.95f);
     public RectCoords l1C = new RectCoords(-80f, -70f, -60f, -80f);
@@ -99,12 +101,19 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     // Constants:
     //static private float kTeapotScale = 6.f; //1.f;
     
-    
     public VirtualButtonRenderer(VirtualButtons activity,
         SampleApplicationSession session)
     {
         mActivity = activity;
-        vuforiaAppSession = session;
+        vuforiaAppSession = session;             
+
+        vbRectangle[0] = new Rectangle(agC.left, agC.top, agC.right, agC.bottom);
+        vbRectangle[1] = new Rectangle(pbC.left, pbC.top, pbC.right, pbC.bottom);
+        vbRectangle[2] = new Rectangle(l1C.left, l1C.top, l1C.right, l1C.bottom);  
+        vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
+        vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
+        vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
+        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);
          
         loadElementSpecs();
     }
@@ -223,6 +232,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         Renderer.getInstance().drawVideoBackground();
         
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         
         // We must detect if background reflection is active and adjust the
         // culling direction.
@@ -257,6 +268,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             
             // Set the texture used for the teapot model:
             //int textureIndex = 0;
+            
+            if(elementSelected)           
+            	applyElementGroup(state);
             
             float vbVertices[] = new float[imageTargetResult
                 .getNumVirtualButtons() * 24];
@@ -323,15 +337,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 
                 Area vbArea = button.getArea();
                 assert (vbArea.getType() == Area.TYPE.RECTANGLE);
-                Rectangle vbRectangle[] = new Rectangle[RECTCOUNT];
-
-                vbRectangle[0] = new Rectangle(agC.left, agC.top, agC.right, agC.bottom);
-                vbRectangle[1] = new Rectangle(pbC.left, pbC.top, pbC.right, pbC.bottom);
-                vbRectangle[2] = new Rectangle(l1C.left, l1C.top, l1C.right, l1C.bottom);  
-                vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
-                vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
-                vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
-                vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);
+                
                 
                 // We add the vertices to a common array in order to have one
                 // single
@@ -409,12 +415,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 
                 GLES20.glDisableVertexAttribArray(vbVertexHandle);
             }
-            
+            	
             Render3DModel(modelViewMatrix);
         
             SampleUtils.checkGLError("VirtualButtons renderFrame");         
         }
         
+        GLES20.glDisable(GLES20.GL_BLEND);
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         
         Renderer.getInstance().end();
@@ -449,7 +456,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     				// first Ag object in level 1
     				meshObjects.add(AgLvl11);
     				meshTextures.add(mTextures.get(0));
-    				meshTransls.add(new Vector3D(-20.0f, 0.0f, 0.0f));
+    				meshTransls.add(new Vector3D(10.0f, 10.0f, 0.0f));
     				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
     				
     				// second Ag object in level 1...
@@ -463,7 +470,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     				// first Pb object in level 1
     				meshObjects.add(PbLvl11);
     				meshTextures.add(mTextures.get(3));
-    				meshTransls.add(new Vector3D(0.0f, 0.0f, 10.0f));
+    				meshTransls.add(new Vector3D(0.0f, 10.0f, 10.0f));
     				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
     				
     				// second Pb object in level 1...
@@ -475,7 +482,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     				// first Ag object in level 2
     				meshObjects.add(AgLvl21);
     				meshTextures.add(mTextures.get(1));
-    				meshTransls.add(new Vector3D(-10.0f, 0.0f, 0.0f));
+    				meshTransls.add(new Vector3D(0.0f, 10.0f, 0.0f));
     				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
     			}
     			else // Pb
@@ -483,7 +490,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     				// first Pb object in level 2
     				meshObjects.add(PbLvl21);
     				meshTextures.add(mTextures.get(4));
-    				meshTransls.add(new Vector3D(0.0f, 0.0f, 5.0f));
+    				meshTransls.add(new Vector3D(0.0f, 10.0f, 5.0f));
     				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));  	
     				
     				// second Pb object in level 2
@@ -585,10 +592,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		{
     			
     		}
-    		*/
-    	}
-    	
-    	     	       	
+    		*/ 		
+    	}	       	
             
     		/*
             // Scale 3D model
@@ -654,5 +659,77 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     public void setTextures(Vector<Texture> textures)
     {
         mTextures = textures;       
+    }
+    
+    public void applyElementGroup(State state)
+    {
+    	if(elementIndex > -1)
+    	{
+    		float tx = 0.0f;
+        	float ty = 0.0f;
+        	float tz = 0.0f;
+        	
+        	float sx = 1.0f;
+        	float sy = 1.0f;
+        	float sz = 1.0f;
+        	
+        	int groupTexture = 0;
+        	
+        	Plane grpPlane = new Plane();
+        	TrackableResult trackableResult = state.getTrackableResult(0);
+        	assert (trackableResult.getType() == ImageTargetResult
+                    .getClassType());
+        	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
+                    trackableResult.getPose()).getData();
+        	float[] modelViewProjection = new float[16];
+        	
+        	switch(elementIndex)
+        	{
+        	case 0: // Ag group
+        		groupTexture = 6;
+        		tx = -22.5f;
+        		ty = -3.0f;
+        		sx = 146.0f;
+        		sy = 64.0f; 
+        		break;
+        	case 1: // Pb group
+        		groupTexture = 7;
+        		tx = 78.0f;
+        		ty = 12.0f;
+        		sx = 59.0f;
+        		sy = 61.0f; 
+        		break;
+        	}
+        	
+        	Matrix.translateM(modelViewMatrix, 0, 
+    				tx, ty, tz);       
+            Matrix.scaleM(modelViewMatrix, 0, 
+            		sx, sy, sz);   
+            Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
+                .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
+            
+            GLES20.glUseProgram(shaderProgramID);
+        	GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                	false, 0, grpPlane.getVertices());
+            GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
+                	false, 0, grpPlane.getNormals());
+            GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                	GLES20.GL_FLOAT, false, 0, grpPlane.getTexCoords());
+            
+            GLES20.glEnableVertexAttribArray(vertexHandle);
+            GLES20.glEnableVertexAttribArray(normalHandle);
+            GLES20.glEnableVertexAttribArray(textureCoordHandle);
+        	
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 
+            		mTextures.get(groupTexture).mTextureID[0]);   	
+        	
+            GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
+                modelViewProjection, 0);
+            GLES20.glUniform1i(texSampler2DHandle, 0);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLES,
+            	6, GLES20.GL_UNSIGNED_SHORT,
+                grpPlane.getIndices());
+    	}
     }
 }

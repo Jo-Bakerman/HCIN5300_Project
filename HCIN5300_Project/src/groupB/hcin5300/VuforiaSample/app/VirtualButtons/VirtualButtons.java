@@ -208,6 +208,12 @@ public class VirtualButtons extends Activity implements
        
        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereOrange.png",
                 getAssets())); // 5
+       
+       mTextures.add(Texture.loadTextureFromApk("Groups/Ag-Group.png",
+               getAssets())); // 6
+       
+       mTextures.add(Texture.loadTextureFromApk("Groups/Pb-Group.png",
+               getAssets())); // 7
     }
     
     
