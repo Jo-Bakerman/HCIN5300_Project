@@ -13,8 +13,11 @@
       -->
       <VirtualButton name="Ag" rectangle="21.45 12.35 35.15 -2.25" enabled="true" />          
       <VirtualButton name="Pb" rectangle="64.25 -3.15 77.55 -16.95" enabled="true" />
-      <VirtualButton name="Overview" rectangle="-70 -30 -56.7 -43.8" enabled="true" />
-      <VirtualButton name="Characteristics" rectangle="-56.7 -30 -43.4 -43.8" enabled="true" />
+      <VirtualButton name="Overview" rectangle="-80 -70 -60 -80" enabled="true" />
+      <VirtualButton name="Characteristics" rectangle="-50 -70 -30 -80" enabled="true" />
+      <VirtualButton name="Model" rectangle="-20 -70 0 -80" enabled="true" />
+      <VirtualButton name="History" rectangle="10 -70 30 -80" enabled="true" />
+      <VirtualButton name="Applications" rectangle="40 -70 60 -80" enabled="true" />
     </ImageTarget>
   </Tracking>
 </QCARConfig>

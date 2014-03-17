@@ -54,11 +54,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     private Vector<Texture> mTextures;
     
     // virtual button coordinates
-    public static final int RECTCOUNT = 4;
+    public static final int RECTCOUNT = 7;
     public RectCoords agC = new RectCoords(21.45f, 12.35f, 35.15f, -2.25f);
     public RectCoords pbC = new RectCoords(64.25f, -3.15f, 77.55f, -16.95f);
-    public RectCoords l1C = new RectCoords(-70f, -30f, -56.7f, -43.8f);
-    public RectCoords l2C = new RectCoords(-56.7f, -30f, -43.4f, -43.8f);
+    public RectCoords l1C = new RectCoords(-80f, -70f, -60f, -80f);
+    public RectCoords l2C = new RectCoords(-50f, -70f, -30f, -80f);
+    public RectCoords l3C = new RectCoords(-20f, -70f, 0f, -80f);
+    public RectCoords l4C = new RectCoords(10f, -70f, 30f, -80f);
+    public RectCoords l5C = new RectCoords(40f, -70f, 60f, -80f);
     
     //private Teapot mTeapot = new Teapot();
     //private Sphere mTeapot = new Sphere(); 
@@ -68,12 +71,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     int currLevel = 1;
     
     // Ag objects
-    MeshObject AgLvl1;
-    MeshObject AgLvl2;
+    MeshObject AgLvl11;
+    MeshObject AgLvl12;
+    MeshObject AgLvl21;
     
     // Pb objects
-    MeshObject PbLvl1;
-    MeshObject PbLvl2; 
+    MeshObject PbLvl11;
+    MeshObject PbLvl21;
+    MeshObject PbLvl22;
     
     // OpenGL ES 2.0 specific (3D model):
     private int shaderProgramID = 0;
@@ -100,23 +105,19 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     {
         mActivity = activity;
         vuforiaAppSession = session;
-              
+         
         loadElementSpecs();
     }
     
     public void loadElementSpecs()
     {
-    	AgLvl1 = new Sphere();
-    	AgLvl2 = new Sphere();
+    	AgLvl11 = new Sphere();
+    	AgLvl12 = new Sphere();
+    	AgLvl21 = new Sphere();
     	
-    	PbLvl1 = new Sphere();
-    	PbLvl2 = new Sphere();
-    	       
-//        pbTransl.add(new Vector3D(0.0f, 0.0f, 10.0f));
-//        pbTransl.add(new Vector3D(0.0f, 0.0f, 5.0f));
-
-//        pbScale.add(new Vector3D(3.0f, 3.0f, 3.0f));
-//        pbScale.add(new Vector3D(6.0f, 6.0f, 6.0f));
+    	PbLvl11 = new Sphere();
+    	PbLvl21 = new Sphere();
+    	PbLvl22 = new Sphere();
     }
     
     // Called when the surface is created or recreated.
@@ -289,12 +290,16 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 	switch(buttonIndex)
                 	{
                 	case 0: // Ag
-                		currLevel = 1;
+                		currLevel = 1; // reset to level 1
+                		if(elementIndex == -1)
+                			mActivity.ElementIsSelected();
                 		elementIndex = buttonIndex;
-                		elementSelected = true;
+                		elementSelected = true;               		
                 		break;
                 	case 1: // Pb
-                		currLevel = 1;
+                		currLevel = 1; // reset to level 1
+                		if(elementIndex == -1)
+                			mActivity.ElementIsSelected();
                 		elementIndex = buttonIndex;
                 		elementSelected = true;
                 		break;
@@ -324,6 +329,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 vbRectangle[1] = new Rectangle(pbC.left, pbC.top, pbC.right, pbC.bottom);
                 vbRectangle[2] = new Rectangle(l1C.left, l1C.top, l1C.right, l1C.bottom);  
                 vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
+                vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
+                vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
+                vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);
                 
                 // We add the vertices to a common array in order to have one
                 // single
@@ -439,18 +447,22 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     			if(elementIndex == 0) // Ag
     			{
     				// first Ag object in level 1
-    				meshObjects.add(AgLvl1);
+    				meshObjects.add(AgLvl11);
     				meshTextures.add(mTextures.get(0));
     				meshTransls.add(new Vector3D(-20.0f, 0.0f, 0.0f));
     				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
     				
     				// second Ag object in level 1...
+//    				meshObjects.add(AgLvl12);
+//    				meshTextures.add(mTextures.get(2));
+//    				meshTransls.add(new Vector3D(20.0f, 0.0f, 0.0f));
+//    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
     			}
     			else // Pb
     			{
     				// first Pb object in level 1
-    				meshObjects.add(PbLvl1);
-    				meshTextures.add(mTextures.get(2));
+    				meshObjects.add(PbLvl11);
+    				meshTextures.add(mTextures.get(3));
     				meshTransls.add(new Vector3D(0.0f, 0.0f, 10.0f));
     				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
     				
@@ -461,7 +473,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     			if(elementIndex == 0) // Ag
     			{
     				// first Ag object in level 2
-    				meshObjects.add(AgLvl2);
+    				meshObjects.add(AgLvl21);
     				meshTextures.add(mTextures.get(1));
     				meshTransls.add(new Vector3D(-10.0f, 0.0f, 0.0f));
     				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
@@ -469,10 +481,16 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     			else // Pb
     			{
     				// first Pb object in level 2
-    				meshObjects.add(PbLvl2);
-    				meshTextures.add(mTextures.get(3));
+    				meshObjects.add(PbLvl21);
+    				meshTextures.add(mTextures.get(4));
     				meshTransls.add(new Vector3D(0.0f, 0.0f, 5.0f));
-    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));  				
+    				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));  	
+    				
+    				// second Pb object in level 2
+//    				meshObjects.add(PbLvl22);
+//    				meshTextures.add(mTextures.get(5));
+//    				meshTransls.add(new Vector3D(0.0f, 0.0f, 0.0f));
+//    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
     			}
     			break;
     		case 3:
@@ -548,6 +566,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 GLES20.glDrawElements(GLES20.GL_TRIANGLES,
                 	meshObjects.get(i).getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
                     meshObjects.get(i).getIndices());
+//                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 
+//                		meshObjects.get(i).getNumObjectVertex());
                 
                 GLES20.glDisableVertexAttribArray(vertexHandle);
                 GLES20.glDisableVertexAttribArray(normalHandle);

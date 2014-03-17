@@ -18,10 +18,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -85,16 +87,20 @@ public class VirtualButtons extends Activity implements
     
     // Virtual Button runtime creation:
     private boolean updateBtns = false;
-    public String virtualButtonInfo[] = {"Ag", "Pb", "Overview", "Characteristics"}; //{ "red", "blue", "yellow", "green" };
+    public String virtualButtonInfo[] = 
+    	{"Ag", "Pb", "Overview", "Characteristics", "Model", "History", "Applications"}; //{ "red", "blue", "yellow", "green" };
     
     // Enumeration for masking button indices into single integer:
     private static final int BUTTON_1 = 1;
     private static final int BUTTON_2 = 2;
     private static final int BUTTON_3 = 4;
     private static final int BUTTON_4 = 8;
+    private static final int BUTTON_5 = 16;
+    private static final int BUTTON_6 = 32;
+    private static final int BUTTON_7 = 64;
     
     private byte buttonMask = 0;
-    static final int NUM_BUTTONS = 4;
+    static final int NUM_BUTTONS = 7;
     
     boolean mIsDroidDevice = false;
        
@@ -121,6 +127,27 @@ public class VirtualButtons extends Activity implements
         
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
             "droid");
+        
+        // disable level buttons 
+        addButtonToToggle(2);
+        addButtonToToggle(3);
+        addButtonToToggle(4);
+        addButtonToToggle(5);
+        addButtonToToggle(6);
+    }
+    
+    public void ElementIsSelected()
+    {
+    	// disable element buttons
+    	addButtonToToggle(0);
+        addButtonToToggle(1);
+    	
+        // enable level buttons 
+        addButtonToToggle(2);
+        addButtonToToggle(3);
+        addButtonToToggle(4);
+        addButtonToToggle(5);
+        addButtonToToggle(6);
     }
     
     // Process Single Tap event to trigger autofocus
@@ -170,11 +197,17 @@ public class VirtualButtons extends Activity implements
     	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereRed.png",
                 getAssets())); // 1
     	
-        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
+    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSpherePurple.png",
                 getAssets())); // 2
+    	
+        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
+                getAssets())); // 3
         
        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereGreen.png",
-                getAssets())); // 3
+                getAssets())); // 4
+       
+       mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereOrange.png",
+                getAssets())); // 5
     }
     
     
@@ -225,34 +258,38 @@ public class VirtualButtons extends Activity implements
     protected void onPause()
     {
         Log.d(LOGTAG, "onPause");
+        
+        // finish will reset the app when home button is pressed
+        finish();
+        
         super.onPause();
         
-        if (mGlView != null)
-        {
-            mGlView.setVisibility(View.INVISIBLE);
-            mGlView.onPause();
-        }
-        
-        // Turn off the flash
-        if (mFlashOptionView != null && mFlash)
-        {
-            // OnCheckedChangeListener is called upon changing the checked state
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-            {
-                ((Switch) mFlashOptionView).setChecked(false);
-            } else
-            {
-                ((CheckBox) mFlashOptionView).setChecked(false);
-            }
-        }
-        
-        try
-        {
-            vuforiaAppSession.pauseAR();
-        } catch (SampleApplicationException e)
-        {
-            Log.e(LOGTAG, e.getString());
-        }
+//        if (mGlView != null)
+//        {
+//            mGlView.setVisibility(View.INVISIBLE);
+//            mGlView.onPause();
+//        }
+//        
+//        // Turn off the flash
+//        if (mFlashOptionView != null && mFlash)
+//        {
+//            // OnCheckedChangeListener is called upon changing the checked state
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+//            {
+//                ((Switch) mFlashOptionView).setChecked(false);
+//            } else
+//            {
+//                ((CheckBox) mFlashOptionView).setChecked(false);
+//            }
+//        }
+//        
+//        try
+//        {
+//            vuforiaAppSession.pauseAR();
+//        } catch (SampleApplicationException e)
+//        {
+//            Log.e(LOGTAG, e.getString());
+//        }
     }
     
     
@@ -552,6 +589,30 @@ public class VirtualButtons extends Activity implements
                 		mRenderer.l2C.left, mRenderer.l2C.top, 
                 		mRenderer.l2C.right, mRenderer.l2C.bottom);                          
             }
+            if ((buttonMask & BUTTON_5) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 5 - " + virtualButtonInfo[4]);
+                
+                toggleVirtualButton(imageTarget, virtualButtonInfo[4],
+                		mRenderer.l3C.left, mRenderer.l3C.top, 
+                		mRenderer.l3C.right, mRenderer.l3C.bottom);                          
+            }
+            if ((buttonMask & BUTTON_6) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 6 - " + virtualButtonInfo[5]);
+                
+                toggleVirtualButton(imageTarget, virtualButtonInfo[5],
+                		mRenderer.l4C.left, mRenderer.l4C.top, 
+                		mRenderer.l4C.right, mRenderer.l4C.bottom);                          
+            }
+            if ((buttonMask & BUTTON_7) != 0)
+            {
+                Log.d(LOGTAG, "Toggle Button 7 - " + virtualButtonInfo[6]);
+                
+                toggleVirtualButton(imageTarget, virtualButtonInfo[6],
+                		mRenderer.l5C.left, mRenderer.l5C.top, 
+                		mRenderer.l5C.right, mRenderer.l5C.bottom);                          
+            }
             
             // Reactivate the data set:
             it.activateDataSet(dataSet);
@@ -622,6 +683,18 @@ public class VirtualButtons extends Activity implements
             case 3:
                 buttonMask |= BUTTON_4;
                 break;
+                
+            case 4:
+                buttonMask |= BUTTON_5;
+                break;
+                
+            case 5:
+                buttonMask |= BUTTON_6;
+                break;
+                
+            case 6:
+                buttonMask |= BUTTON_7;
+                break;
         }
         updateBtns = true;
     }
@@ -676,8 +749,6 @@ public class VirtualButtons extends Activity implements
     final public static int CMD_CAMERA_REAR = 4;
     final public static int CMD_BUTTON_Ag = 5;
     final public static int CMD_BUTTON_Pb = 6;
-    final public static int CMD_BUTTON_LEVEL1 = 7;
-    final public static int CMD_BUTTON_LEVEL2 = 8;
 //    final public static int CMD_BUTTON_RED = 5;
 //    final public static int CMD_BUTTON_BLUE = 6;
 //    final public static int CMD_BUTTON_YELLOW = 7;
@@ -725,10 +796,7 @@ public class VirtualButtons extends Activity implements
                 CMD_BUTTON_Ag, true);
             group.addSelectionItem(getString(R.string.menu_button_pb),
                 CMD_BUTTON_Pb, true);
-        group.addSelectionItem(getString(R.string.menu_button_level1),
-                    CMD_BUTTON_LEVEL1, true);
-                group.addSelectionItem(getString(R.string.menu_button_level2),
-                    CMD_BUTTON_LEVEL2, true);
+    
 //        group.addSelectionItem(getString(R.string.menu_button_red),
 //            CMD_BUTTON_RED, true);
 //        group.addSelectionItem(getString(R.string.menu_button_blue),
@@ -844,22 +912,13 @@ public class VirtualButtons extends Activity implements
                 addButtonToToggle(1);
                 break;
                 
-            case CMD_BUTTON_LEVEL1:
-                addButtonToToggle(2);
-                break;
-            
-            case CMD_BUTTON_LEVEL2:
-                addButtonToToggle(3);
-                break;
-            
 //            case CMD_BUTTON_YELLOW:
 //                addButtonToToggle(2);
 //                break;
 //            
 //            case CMD_BUTTON_GREEN:
 //                addButtonToToggle(3);
-//                break;
-        
+//                break;        
         }
         
         return result;
@@ -870,5 +929,4 @@ public class VirtualButtons extends Activity implements
     {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
-    
 }
