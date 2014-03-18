@@ -5,6 +5,7 @@
 
 package groupB.hcin5300.VuforiaSample.app.VirtualButtons;
 
+import java.io.FileNotFoundException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -29,6 +30,11 @@ import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.qualcomm.vuforia.VirtualButton;
 import com.qualcomm.vuforia.VirtualButtonResult;
 import com.qualcomm.vuforia.Vuforia;
+import com.threed.jpct.Loader;
+import com.threed.jpct.Object3D;
+import com.threed.jpct.SimpleVector;
+
+
 import groupB.hcin5300.SampleApplication.SampleApplicationSession;
 import groupB.hcin5300.SampleApplication.utils.CubeShaders;
 import groupB.hcin5300.SampleApplication.utils.LineShaders;
@@ -41,6 +47,7 @@ import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
+import groupB.hcin5300.VuforiaSample.R;
 
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 {
@@ -101,6 +108,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     // Constants:
     //static private float kTeapotScale = 6.f; //1.f;
     
+    // test obj file
+    private Object3D thing;
+    
     public VirtualButtonRenderer(VirtualButtons activity,
         SampleApplicationSession session)
     {
@@ -113,7 +123,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
         vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
         vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
-        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);
+        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);           
          
         loadElementSpecs();
     }
@@ -127,6 +137,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	PbLvl11 = new Sphere();
     	PbLvl21 = new Sphere();
     	PbLvl22 = new Sphere();
+    	
+//    	 try {
+// 			thing = loadModel("res/raw/rock_obj.obj", "res/raw/rock_mtl.mtl", 1);
+// 		} catch (FileNotFoundException e) {
+// 			// TODO Auto-generated catch block
+// 			e.printStackTrace();
+// 		}
     }
     
     // Called when the surface is created or recreated.
@@ -270,7 +287,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             //int textureIndex = 0;
             
             if(elementSelected)           
-            	applyElementGroup(state);
+            	applyElementGroupHighlight(state);
             
             float vbVertices[] = new float[imageTargetResult
                 .getNumVirtualButtons() * 24];
@@ -301,89 +318,17 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 if (buttonResult.isPressed())
                 {
                 	//textureIndex = buttonIndex;
-                	switch(buttonIndex)
-                	{
-                	case 0: // Ag
-                		currLevel = 1; // reset to level 1
-                		if(elementIndex == -1)
-                			mActivity.ElementIsSelected();
-                		elementIndex = buttonIndex;
-                		elementSelected = true;               		
-                		break;
-                	case 1: // Pb
-                		currLevel = 1; // reset to level 1
-                		if(elementIndex == -1)
-                			mActivity.ElementIsSelected();
-                		elementIndex = buttonIndex;
-                		elementSelected = true;
-                		break;
-                	case 2: // level1
-                		currLevel = 1;
-                		break;
-                	case 3: // level2
-                		currLevel = 2;
-                		break;
-                	case 4: // level3
-                		currLevel = 3;
-                		break;
-                	case 5: // level4
-                		currLevel = 4;
-                		break;
-                	case 6: // level5
-                		currLevel = 5;
-                		break;
-                	}
+                	buttonSelection(buttonIndex);
                 }
                 
                 Area vbArea = button.getArea();
                 assert (vbArea.getType() == Area.TYPE.RECTANGLE);
-                
-                
+                               
                 // We add the vertices to a common array in order to have one
                 // single
                 // draw call. This is more efficient than having multiple
                 // glDrawArray calls
-                vbVertices[vbCounter] = vbRectangle[buttonIndex].getLeftTopX();
-                vbVertices[vbCounter + 1] = vbRectangle[buttonIndex]
-                    .getLeftTopY();
-                vbVertices[vbCounter + 2] = 0.0f;
-                vbVertices[vbCounter + 3] = vbRectangle[buttonIndex]
-                    .getRightBottomX();
-                vbVertices[vbCounter + 4] = vbRectangle[buttonIndex]
-                    .getLeftTopY();
-                vbVertices[vbCounter + 5] = 0.0f;
-                vbVertices[vbCounter + 6] = vbRectangle[buttonIndex]
-                    .getRightBottomX();
-                vbVertices[vbCounter + 7] = vbRectangle[buttonIndex]
-                    .getLeftTopY();
-                vbVertices[vbCounter + 8] = 0.0f;
-                vbVertices[vbCounter + 9] = vbRectangle[buttonIndex]
-                    .getRightBottomX();
-                vbVertices[vbCounter + 10] = vbRectangle[buttonIndex]
-                    .getRightBottomY();
-                vbVertices[vbCounter + 11] = 0.0f;
-                vbVertices[vbCounter + 12] = vbRectangle[buttonIndex]
-                    .getRightBottomX();
-                vbVertices[vbCounter + 13] = vbRectangle[buttonIndex]
-                    .getRightBottomY();
-                vbVertices[vbCounter + 14] = 0.0f;
-                vbVertices[vbCounter + 15] = vbRectangle[buttonIndex]
-                    .getLeftTopX();
-                vbVertices[vbCounter + 16] = vbRectangle[buttonIndex]
-                    .getRightBottomY();
-                vbVertices[vbCounter + 17] = 0.0f;
-                vbVertices[vbCounter + 18] = vbRectangle[buttonIndex]
-                    .getLeftTopX();
-                vbVertices[vbCounter + 19] = vbRectangle[buttonIndex]
-                    .getRightBottomY();
-                vbVertices[vbCounter + 20] = 0.0f;
-                vbVertices[vbCounter + 21] = vbRectangle[buttonIndex]
-                    .getLeftTopX();
-                vbVertices[vbCounter + 22] = vbRectangle[buttonIndex]
-                    .getLeftTopY();
-                vbVertices[vbCounter + 23] = 0.0f;
-                vbCounter += 24;
-                
+                vbCounter = fillVBvertices(vbCounter, buttonIndex, vbVertices);              
             }
             
             // We only render if there is something on the array
@@ -416,7 +361,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 GLES20.glDisableVertexAttribArray(vbVertexHandle);
             }
             	
-            Render3DModel(modelViewMatrix);
+            Render3DModel(trackableResult);
         
             SampleUtils.checkGLError("VirtualButtons renderFrame");         
         }
@@ -424,11 +369,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         GLES20.glDisable(GLES20.GL_BLEND);
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         
-        Renderer.getInstance().end();
-        
+        Renderer.getInstance().end();       
     }
     
-    private void Render3DModel(float[] modelViewMatrix)
+    private void Render3DModel(TrackableResult tr)
     {      
     	if(elementSelected)
     	{
@@ -446,144 +390,21 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		Vector<Texture> textTextures = new Vector<Texture>();
     		Vector<Vector3D> textTransls = new Vector<Vector3D>();
     		Vector<Vector3D> textScales = new Vector<Vector3D>();
-    		*/
+    		*/   		
     		
-    		switch(currLevel)
-    		{
-    		case 1:
-    			if(elementIndex == 0) // Ag
-    			{
-    				// first Ag object in level 1
-    				meshObjects.add(AgLvl11);
-    				meshTextures.add(mTextures.get(0));
-    				meshTransls.add(new Vector3D(10.0f, 10.0f, 0.0f));
-    				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
-    				
-    				// second Ag object in level 1...
-//    				meshObjects.add(AgLvl12);
-//    				meshTextures.add(mTextures.get(2));
-//    				meshTransls.add(new Vector3D(20.0f, 0.0f, 0.0f));
-//    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
-    			}
-    			else // Pb
-    			{
-    				// first Pb object in level 1
-    				meshObjects.add(PbLvl11);
-    				meshTextures.add(mTextures.get(3));
-    				meshTransls.add(new Vector3D(0.0f, 10.0f, 10.0f));
-    				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
-    				
-    				// second Pb object in level 1...
-    			}
-    			break;
-    		case 2:
-    			if(elementIndex == 0) // Ag
-    			{
-    				// first Ag object in level 2
-    				meshObjects.add(AgLvl21);
-    				meshTextures.add(mTextures.get(1));
-    				meshTransls.add(new Vector3D(0.0f, 10.0f, 0.0f));
-    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
-    			}
-    			else // Pb
-    			{
-    				// first Pb object in level 2
-    				meshObjects.add(PbLvl21);
-    				meshTextures.add(mTextures.get(4));
-    				meshTransls.add(new Vector3D(0.0f, 10.0f, 5.0f));
-    				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));  	
-    				
-    				// second Pb object in level 2
-//    				meshObjects.add(PbLvl22);
-//    				meshTextures.add(mTextures.get(5));
-//    				meshTransls.add(new Vector3D(0.0f, 0.0f, 0.0f));
-//    				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
-    			}
-    			break;
-    		case 3:
-    			if(elementIndex == 0) // Ag
-    			{
-    				
-    			}
-    			else // Pb
-    			{
-    				
-    			}
-    			break;
-    		case 4:
-    			if(elementIndex == 0) // Ag
-    			{
-    				
-    			}
-    			else // Pb
-    			{
-    				
-    			}
-    			break;
-    		case 5:
-    			if(elementIndex == 0) // Ag
-    			{
-    				
-    			}
-    			else // Pb
-    			{
-    				
-    			}
-    			break;
-    		}
+    		// add objects and textures associated with the selected level
+    		LoadLevelObjects(meshObjects, meshTextures, meshTransls, meshScales);
     		
     		// Assumptions:
             //assert (textureIndex < mTextures.size());
             //Texture thisTexture = mTextures.get(textureIndex);
     		
-    		float[] modelViewScaled = modelViewMatrix;
-    		
     		// render mesh objects in the current level
     		for(int i=0; i<meshObjects.size(); ++i)
     		{   			
-    			Matrix.scaleM(modelViewScaled, 0, 
-    					meshScales.get(i).x, meshScales.get(i).y, meshScales.get(i).z);   			
-    			Matrix.translateM(modelViewMatrix, 0, 
-    					meshTransls.get(i).x, meshTransls.get(i).y, meshTransls.get(i).z);
-    			
-    			float[] modelViewProjectionScaled = new float[16];
-                Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
-                    .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
-                
-                // Render 3D Model
-                GLES20.glUseProgram(shaderProgramID);       
-                
-                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                	false, 0, meshObjects.get(i).getVertices());
-                GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
-                	false, 0, meshObjects.get(i).getNormals());
-                GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                	GLES20.GL_FLOAT, false, 0, meshObjects.get(i).getTexCoords());
-                
-                GLES20.glEnableVertexAttribArray(vertexHandle);
-                GLES20.glEnableVertexAttribArray(normalHandle);
-                GLES20.glEnableVertexAttribArray(textureCoordHandle);
-                
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                    meshTextures.get(i).mTextureID[0]);
-                GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
-                    modelViewProjectionScaled, 0);
-                GLES20.glUniform1i(texSampler2DHandle, 0);
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES,
-                	meshObjects.get(i).getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                    meshObjects.get(i).getIndices());
-//                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 
-//                		meshObjects.get(i).getNumObjectVertex());
-                
-                GLES20.glDisableVertexAttribArray(vertexHandle);
-                GLES20.glDisableVertexAttribArray(normalHandle);
-                GLES20.glDisableVertexAttribArray(textureCoordHandle);   			
-    			
-    			Matrix.translateM(modelViewMatrix, 0, 
-    					-meshTransls.get(i).x, -meshTransls.get(i).y, -meshTransls.get(i).z);
-    			Matrix.scaleM(modelViewScaled, 0, 
-    					-meshScales.get(i).x, -meshScales.get(i).y, -meshScales.get(i).z);
+    			RenderMeshObject(
+    					tr, meshObjects.get(i), meshTextures.get(i), 
+    					    meshTransls.get(i), meshScales.get(i));
     		}
     		
     		// render text objects in the current level
@@ -639,6 +460,141 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             */                          
     }
     
+    private void LoadLevelObjects(Vector<MeshObject> meshObjects,
+    				Vector<Texture> meshTextures,
+    				Vector<Vector3D> meshTransls,
+    				Vector<Vector3D> meshScales)
+    {
+		switch(currLevel)
+		{
+		case 1:
+			if(elementIndex == 0) // Ag
+			{
+				// first Ag object in level 1
+				meshObjects.add(AgLvl11);
+				meshTextures.add(mTextures.get(0));
+				meshTransls.add(new Vector3D(10.0f, 10.0f, 0.0f));
+				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
+				
+				// second Ag object in level 1...
+				meshObjects.add(AgLvl12);
+				meshTextures.add(mTextures.get(2));
+				meshTransls.add(new Vector3D(20.0f, 0.0f, 0.0f));
+				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+			}
+			else // Pb
+			{
+				// first Pb object in level 1
+				meshObjects.add(PbLvl11);
+				meshTextures.add(mTextures.get(3));
+				meshTransls.add(new Vector3D(0.0f, 10.0f, 10.0f));
+				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
+				
+				// second Pb object in level 1...
+			}
+			break;
+		case 2:
+			if(elementIndex == 0) // Ag
+			{
+				// first Ag object in level 2
+				meshObjects.add(AgLvl21);
+				meshTextures.add(mTextures.get(1));
+				meshTransls.add(new Vector3D(0.0f, 10.0f, 0.0f));
+				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+			}
+			else // Pb
+			{
+				// first Pb object in level 2
+				meshObjects.add(PbLvl21);
+				meshTextures.add(mTextures.get(4));
+				meshTransls.add(new Vector3D(0.0f, 10.0f, 5.0f));
+				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));  	
+				
+				// second Pb object in level 2
+				meshObjects.add(PbLvl22);
+				meshTextures.add(mTextures.get(5));
+				meshTransls.add(new Vector3D(0.0f, 0.0f, 0.0f));
+				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+			}
+			break;
+		case 3:
+			if(elementIndex == 0) // Ag
+			{
+				
+			}
+			else // Pb
+			{
+				
+			}
+			break;
+		case 4:
+			if(elementIndex == 0) // Ag
+			{
+				
+			}
+			else // Pb
+			{
+				
+			}
+			break;
+		case 5:
+			if(elementIndex == 0) // Ag
+			{
+				
+			}
+			else // Pb
+			{
+				
+			}
+			break;
+		}
+    }
+    
+    private void RenderMeshObject(TrackableResult tr, MeshObject mO,
+    		Texture mT,
+			Vector3D mTr,
+			Vector3D mS)
+    {
+    	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
+                tr.getPose()).getData();
+    	float[] modelViewProjection = new float[16];
+    	
+    	Matrix.translateM(modelViewMatrix, 0, 
+    			mTr.x, mTr.y, mTr.z);       
+        Matrix.scaleM(modelViewMatrix, 0, 
+        		mS.x, mS.y, mS.z);   
+        Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
+            .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
+        
+        
+        // Render 3D Model
+        GLES20.glUseProgram(shaderProgramID);       
+        
+        GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+        	false, 0, mO.getVertices());
+        GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
+        	false, 0, mO.getNormals());
+        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+        	GLES20.GL_FLOAT, false, 0, mO.getTexCoords());
+        
+        GLES20.glEnableVertexAttribArray(vertexHandle);
+        GLES20.glEnableVertexAttribArray(normalHandle);
+        GLES20.glEnableVertexAttribArray(textureCoordHandle);
+        
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
+            mT.mTextureID[0]);
+        GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
+            modelViewProjection, 0);
+        GLES20.glUniform1i(texSampler2DHandle, 0);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES,
+        	mO.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
+            mO.getIndices());
+        
+        GLES20.glDisableVertexAttribArray(vertexHandle);
+        GLES20.glDisableVertexAttribArray(normalHandle);
+        GLES20.glDisableVertexAttribArray(textureCoordHandle);   						
+    }
     
     private Buffer fillBuffer(float[] array)
     {
@@ -661,7 +617,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         mTextures = textures;       
     }
     
-    public void applyElementGroup(State state)
+    public void applyElementGroupHighlight(State state)
     {
     	if(elementIndex > -1)
     	{
@@ -732,4 +688,108 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 grpPlane.getIndices());
     	}
     }
+    
+    private void buttonSelection(int buttonIndex)
+    {
+    	switch(buttonIndex)
+    	{
+    	case 0: // Ag
+    		currLevel = 1; // reset to level 1
+    		if(elementIndex == -1)
+    			mActivity.ElementIsSelected();
+    		elementIndex = buttonIndex;
+    		elementSelected = true;               		
+    		break;
+    	case 1: // Pb
+    		currLevel = 1; // reset to level 1
+    		if(elementIndex == -1)
+    			mActivity.ElementIsSelected();
+    		elementIndex = buttonIndex;
+    		elementSelected = true;
+    		break;
+    	case 2: // level1
+    		currLevel = 1;
+    		break;
+    	case 3: // level2
+    		currLevel = 2;
+    		break;
+    	case 4: // level3
+    		currLevel = 3;
+    		break;
+    	case 5: // level4
+    		currLevel = 4;
+    		break;
+    	case 6: // level5
+    		currLevel = 5;
+    		break;
+    	}
+    }
+    
+    private short fillVBvertices(short vbC, int buttonIndex, float[] vbVertices)
+    {
+    	short vbCounter = vbC;
+    	vbVertices[vbCounter] = vbRectangle[buttonIndex].getLeftTopX();
+        vbVertices[vbCounter + 1] = vbRectangle[buttonIndex]
+            .getLeftTopY();
+        vbVertices[vbCounter + 2] = 0.0f;
+        vbVertices[vbCounter + 3] = vbRectangle[buttonIndex]
+            .getRightBottomX();
+        vbVertices[vbCounter + 4] = vbRectangle[buttonIndex]
+            .getLeftTopY();
+        vbVertices[vbCounter + 5] = 0.0f;
+        vbVertices[vbCounter + 6] = vbRectangle[buttonIndex]
+            .getRightBottomX();
+        vbVertices[vbCounter + 7] = vbRectangle[buttonIndex]
+            .getLeftTopY();
+        vbVertices[vbCounter + 8] = 0.0f;
+        vbVertices[vbCounter + 9] = vbRectangle[buttonIndex]
+            .getRightBottomX();
+        vbVertices[vbCounter + 10] = vbRectangle[buttonIndex]
+            .getRightBottomY();
+        vbVertices[vbCounter + 11] = 0.0f;
+        vbVertices[vbCounter + 12] = vbRectangle[buttonIndex]
+            .getRightBottomX();
+        vbVertices[vbCounter + 13] = vbRectangle[buttonIndex]
+            .getRightBottomY();
+        vbVertices[vbCounter + 14] = 0.0f;
+        vbVertices[vbCounter + 15] = vbRectangle[buttonIndex]
+            .getLeftTopX();
+        vbVertices[vbCounter + 16] = vbRectangle[buttonIndex]
+            .getRightBottomY();
+        vbVertices[vbCounter + 17] = 0.0f;
+        vbVertices[vbCounter + 18] = vbRectangle[buttonIndex]
+            .getLeftTopX();
+        vbVertices[vbCounter + 19] = vbRectangle[buttonIndex]
+            .getRightBottomY();
+        vbVertices[vbCounter + 20] = 0.0f;
+        vbVertices[vbCounter + 21] = vbRectangle[buttonIndex]
+            .getLeftTopX();
+        vbVertices[vbCounter + 22] = vbRectangle[buttonIndex]
+            .getLeftTopY();
+        vbVertices[vbCounter + 23] = 0.0f;
+        vbCounter += 24;
+        
+        return vbCounter;
+    }
+
+//    private Object3D loadModel(String filename, String mtlname, float scale) 
+//    		throws FileNotFoundException {		
+//        Object3D[] model = Loader.loadOBJ
+//        		(mActivity.getResources().openRawResource(R.raw.rock_obj),
+//        		 mActivity.getResources().openRawResource(R.raw.rock_mtl),
+//        		 scale);
+//        Object3D o3d = new Object3D(0);
+//        Object3D temp = null;
+//        for (int i = 0; i < model.length; i++) {
+//            temp = model[i];
+//            temp.setCenter(SimpleVector.ORIGIN);
+//            temp.rotateX((float)( -.5*Math.PI));
+//            temp.rotateMesh();
+//            temp.setRotationMatrix(new com.threed.jpct.Matrix());
+//            o3d = Object3D.mergeObjects(o3d, temp);
+//            o3d.build();
+//        }
+//        return o3d;
+//    }
 }
+

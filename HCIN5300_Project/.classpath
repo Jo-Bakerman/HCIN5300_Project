@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="var" path="QCAR_SDK_ROOT/build/java/vuforia/Vuforia.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="/Users/Jo/Downloads/java external libraries/jpct-ae/lib/jpct_ae.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
