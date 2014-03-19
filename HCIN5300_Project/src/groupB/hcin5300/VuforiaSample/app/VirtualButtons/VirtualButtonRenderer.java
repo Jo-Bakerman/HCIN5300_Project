@@ -30,9 +30,14 @@ import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.qualcomm.vuforia.VirtualButton;
 import com.qualcomm.vuforia.VirtualButtonResult;
 import com.qualcomm.vuforia.Vuforia;
+import com.threed.jpct.Camera;
+import com.threed.jpct.FrameBuffer;
+import com.threed.jpct.Light;
 import com.threed.jpct.Loader;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
+import com.threed.jpct.World;
+import com.threed.jpct.util.MemoryHelper;
 
 
 import groupB.hcin5300.SampleApplication.SampleApplicationSession;
@@ -110,6 +115,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     // test obj file
     private Object3D thing;
+	private Light sun = null;
+	private World world = null;
+	private Camera cam = null;
+	private FrameBuffer fb = null;
     
     public VirtualButtonRenderer(VirtualButtons activity,
         SampleApplicationSession session)
@@ -123,9 +132,40 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
         vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
         vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
-        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);           
-         
+        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);
+           
+        loadJPCTparams();
         loadElementSpecs();
+    } 
+    
+    public void loadJPCTparams()
+    {
+    	 try {
+  			thing = loadModel("res/raw/rock_obj.obj", "res/raw/rock_mtl.mtl", 1);
+  		} catch (FileNotFoundException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  		}
+    	 
+    	world = new World();
+    	world.setAmbientLight(20, 20, 20);
+
+    	sun = new Light(world);
+    	sun.setIntensity(250, 250, 250);
+    	
+    	thing.build();
+		world.addObject(thing);
+		cam = world.getCamera();
+		cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
+	    cam.lookAt(thing.getTransformedCenter());
+
+		
+		SimpleVector sv = new SimpleVector();
+		sv.set(thing.getTransformedCenter());
+		sv.y -= 100;
+		sv.z -= 100;
+		sun.setPosition(sv);
+		MemoryHelper.compact();
     }
     
     public void loadElementSpecs()
@@ -136,14 +176,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	
     	PbLvl11 = new Sphere();
     	PbLvl21 = new Sphere();
-    	PbLvl22 = new Sphere();
-    	
-//    	 try {
-// 			thing = loadModel("res/raw/rock_obj.obj", "res/raw/rock_mtl.mtl", 1);
-// 		} catch (FileNotFoundException e) {
-// 			// TODO Auto-generated catch block
-// 			e.printStackTrace();
-// 		}
+    	PbLvl22 = new Sphere();   	
     }
     
     // Called when the surface is created or recreated.
@@ -169,6 +202,11 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         
         // Call Vuforia function to handle render surface size changes:
         vuforiaAppSession.onSurfaceChanged(width, height);
+        
+        if (fb != null) {
+            fb.dispose();
+       }
+       fb = new FrameBuffer(width, height);
     }
     
     
@@ -181,6 +219,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         
         // Call our function to render content
         renderFrame();
+        
+        world.renderScene(fb);
+        world.draw(fb);
+        fb.display();
     }
     
     
@@ -269,19 +311,12 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         if (state.getNumTrackableResults() > 0)
         {
             // Get the trackable:
-            TrackableResult trackableResult = state.getTrackableResult(0);
-            float[] modelViewMatrix = Tool.convertPose2GLMatrix(
-                trackableResult.getPose()).getData();
+            TrackableResult trackableResult = state.getTrackableResult(0);           
             
             // The image target specific result:
             assert (trackableResult.getType() == ImageTargetResult
                 .getClassType());
-            ImageTargetResult imageTargetResult = (ImageTargetResult) trackableResult;                     
-            
-            // Set transformations:
-            float[] modelViewProjection = new float[16];
-            Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
-                .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
+                                
             
             // Set the texture used for the teapot model:
             //int textureIndex = 0;
@@ -289,78 +324,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             if(elementSelected)           
             	applyElementGroupHighlight(state);
             
-            float vbVertices[] = new float[imageTargetResult
-                .getNumVirtualButtons() * 24];
-            short vbCounter = 0;
-            
-            
-            // Iterate through this targets virtual buttons:
-            for (int i = 0; i < imageTargetResult.getNumVirtualButtons(); ++i)
-            {
-                VirtualButtonResult buttonResult = imageTargetResult
-                    .getVirtualButtonResult(i);
-                VirtualButton button = buttonResult.getVirtualButton();
-                
-                int buttonIndex = 0;
-                
-                // Run through button name array to find button index
-                for (int j = 0; j < VirtualButtons.NUM_BUTTONS; ++j)
-                {
-                    if (button.getName().compareTo(
-                        mActivity.virtualButtonInfo[j]) == 0)
-                    {
-                        buttonIndex = j;
-                        break;
-                    }
-                }
-                
-                // If the button is pressed, than use this texture:
-                if (buttonResult.isPressed())
-                {
-                	//textureIndex = buttonIndex;
-                	buttonSelection(buttonIndex);
-                }
-                
-                Area vbArea = button.getArea();
-                assert (vbArea.getType() == Area.TYPE.RECTANGLE);
-                               
-                // We add the vertices to a common array in order to have one
-                // single
-                // draw call. This is more efficient than having multiple
-                // glDrawArray calls
-                vbCounter = fillVBvertices(vbCounter, buttonIndex, vbVertices);              
-            }
-            
-            // We only render if there is something on the array
-            if (vbCounter > 0)
-            {
-                // Render frame around button
-                GLES20.glUseProgram(vbShaderProgramID);
-                
-                GLES20.glVertexAttribPointer(vbVertexHandle, 3,
-                    GLES20.GL_FLOAT, false, 0, fillBuffer(vbVertices));
-                
-                GLES20.glEnableVertexAttribArray(vbVertexHandle);
-                
-                GLES20.glUniform1f(lineOpacityHandle, 1.0f);
-                GLES20.glUniform3f(lineColorHandle, 1.0f, 1.0f, 1.0f);
-                
-                GLES20.glUniformMatrix4fv(mvpMatrixButtonsHandle, 1, false,
-                    modelViewProjection, 0);
-                
-                // We multiply by 8 because that's the number of vertices per
-                // button
-                // The reason is that GL_LINES considers only pairs. So some
-                // vertices
-                // must be repeated.
-                GLES20.glDrawArrays(GLES20.GL_LINES, 0,
-                    imageTargetResult.getNumVirtualButtons() * 8);
-                
-                SampleUtils.checkGLError("VirtualButtons drawButton");
-                
-                GLES20.glDisableVertexAttribArray(vbVertexHandle);
-            }
-            	
+            RenderVirtualButtons(trackableResult);          	
             Render3DModel(trackableResult);
         
             SampleUtils.checkGLError("VirtualButtons renderFrame");         
@@ -406,6 +370,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     					tr, meshObjects.get(i), meshTextures.get(i), 
     					    meshTransls.get(i), meshScales.get(i));
     		}
+    		
+    		
+    		
     		
     		// render text objects in the current level
     		/*
@@ -725,6 +692,89 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	}
     }
     
+    private void RenderVirtualButtons(TrackableResult trackableResult)
+    {
+        ImageTargetResult imageTargetResult = (ImageTargetResult) trackableResult; 
+        
+    	// Set transformations:
+    	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
+              trackableResult.getPose()).getData();
+    	float[] modelViewProjection = new float[16];
+    	Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
+          .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
+      
+    	float vbVertices[] = new float[imageTargetResult
+    	                               .getNumVirtualButtons() * 24];
+    	short vbCounter = 0;
+    	                           
+    	// Iterate through this targets virtual buttons:
+        for (int i = 0; i < imageTargetResult.getNumVirtualButtons(); ++i)
+        {
+            VirtualButtonResult buttonResult = imageTargetResult
+                .getVirtualButtonResult(i);
+            VirtualButton button = buttonResult.getVirtualButton();
+            
+            int buttonIndex = 0;
+            
+            // Run through button name array to find button index
+            for (int j = 0; j < VirtualButtons.NUM_BUTTONS; ++j)
+            {
+                if (button.getName().compareTo(
+                    mActivity.virtualButtonInfo[j]) == 0)
+                {
+                    buttonIndex = j;
+                    break;
+                }
+            }
+            
+            // If the button is pressed, than use this texture:
+            if (buttonResult.isPressed())
+            {
+            	//textureIndex = buttonIndex;
+            	buttonSelection(buttonIndex);
+            }
+            
+            Area vbArea = button.getArea();
+            assert (vbArea.getType() == Area.TYPE.RECTANGLE);
+                           
+            // We add the vertices to a common array in order to have one
+            // single
+            // draw call. This is more efficient than having multiple
+            // glDrawArray calls
+            vbCounter = fillVBvertices(vbCounter, buttonIndex, vbVertices);              
+        }
+        
+        // We only render if there is something on the array
+        if (vbCounter > 0)
+        {
+            // Render frame around button
+            GLES20.glUseProgram(vbShaderProgramID);
+            
+            GLES20.glVertexAttribPointer(vbVertexHandle, 3,
+                GLES20.GL_FLOAT, false, 0, fillBuffer(vbVertices));
+            
+            GLES20.glEnableVertexAttribArray(vbVertexHandle);
+            
+            GLES20.glUniform1f(lineOpacityHandle, 1.0f);
+            GLES20.glUniform3f(lineColorHandle, 1.0f, 1.0f, 1.0f);
+            
+            GLES20.glUniformMatrix4fv(mvpMatrixButtonsHandle, 1, false,
+                modelViewProjection, 0);
+            
+            // We multiply by 8 because that's the number of vertices per
+            // button
+            // The reason is that GL_LINES considers only pairs. So some
+            // vertices
+            // must be repeated.
+            GLES20.glDrawArrays(GLES20.GL_LINES, 0,
+                imageTargetResult.getNumVirtualButtons() * 8);
+            
+            SampleUtils.checkGLError("VirtualButtons drawButton");
+            
+            GLES20.glDisableVertexAttribArray(vbVertexHandle);
+        }                  
+    }
+    
     private short fillVBvertices(short vbC, int buttonIndex, float[] vbVertices)
     {
     	short vbCounter = vbC;
@@ -772,24 +822,24 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         return vbCounter;
     }
 
-//    private Object3D loadModel(String filename, String mtlname, float scale) 
-//    		throws FileNotFoundException {		
-//        Object3D[] model = Loader.loadOBJ
-//        		(mActivity.getResources().openRawResource(R.raw.rock_obj),
-//        		 mActivity.getResources().openRawResource(R.raw.rock_mtl),
-//        		 scale);
-//        Object3D o3d = new Object3D(0);
-//        Object3D temp = null;
-//        for (int i = 0; i < model.length; i++) {
-//            temp = model[i];
-//            temp.setCenter(SimpleVector.ORIGIN);
-//            temp.rotateX((float)( -.5*Math.PI));
-//            temp.rotateMesh();
-//            temp.setRotationMatrix(new com.threed.jpct.Matrix());
-//            o3d = Object3D.mergeObjects(o3d, temp);
-//            o3d.build();
-//        }
-//        return o3d;
-//    }
+    private Object3D loadModel(String filename, String mtlname, float scale) 
+    		throws FileNotFoundException {		
+        Object3D[] model = Loader.loadOBJ
+        		(mActivity.getResources().openRawResource(R.raw.rock_obj),
+        		 mActivity.getResources().openRawResource(R.raw.rock_mtl),
+        		 scale);
+        Object3D o3d = new Object3D(0);
+        Object3D temp = null;
+        for (int i = 0; i < model.length; i++) {
+            temp = model[i];
+            temp.setCenter(SimpleVector.ORIGIN);
+            temp.rotateX((float)( -.5*Math.PI));
+            temp.rotateMesh();
+            temp.setRotationMatrix(new com.threed.jpct.Matrix());
+            o3d = Object3D.mergeObjects(o3d, temp);
+            o3d.build();
+        }
+        return o3d;
+    }
 }
 
