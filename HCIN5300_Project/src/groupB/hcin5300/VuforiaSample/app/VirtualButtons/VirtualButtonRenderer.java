@@ -20,6 +20,8 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.qualcomm.vuforia.Area;
+import com.qualcomm.vuforia.CameraCalibration;
+import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.ImageTargetResult;
 import com.qualcomm.vuforia.Rectangle;
 import com.qualcomm.vuforia.Renderer;
@@ -27,6 +29,7 @@ import com.qualcomm.vuforia.State;
 import com.qualcomm.vuforia.Tool;
 import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
+import com.qualcomm.vuforia.Vec2F;
 import com.qualcomm.vuforia.VirtualButton;
 import com.qualcomm.vuforia.VirtualButtonResult;
 import com.qualcomm.vuforia.Vuforia;
@@ -156,9 +159,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	thing.build();
 		world.addObject(thing);
 		cam = world.getCamera();
-		cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
-	    cam.lookAt(thing.getTransformedCenter());
-
 		
 		SimpleVector sv = new SimpleVector();
 		sv.set(thing.getTransformedCenter());
@@ -324,7 +324,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             if(elementSelected)           
             	applyElementGroupHighlight(state);
             
-            RenderVirtualButtons(trackableResult);          	
+            RenderVirtualButtons(trackableResult);
+            RenderObjModel(trackableResult);
             Render3DModel(trackableResult);
         
             SampleUtils.checkGLError("VirtualButtons renderFrame");         
@@ -334,6 +335,31 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         
         Renderer.getInstance().end();       
+    }
+    
+    private void RenderObjModel(TrackableResult trackableResult)
+    {
+//    	const QCAR::CameraCalibration& cameraCalibration = QCAR::CameraDevice::getInstance().getCameraCalibration();
+//    	QCAR::Vec2F size = cameraCalibration.getSize();
+//    	QCAR::Vec2F focalLength = cameraCalibration.getFocalLength();
+//    	float fovyRadians = 2 * atan(0.5f * size.data[1] / focalLength.data[1]);
+//    	float fovRadians = 2 * atan(0.5f * size.data[0] / focalLength.data[0]);
+    	
+//    	CameraCalibration cameraCali = CameraDevice.getInstance().getCameraCalibration();
+//    	Vec2F size = cameraCali.getSize();
+//    	Vec2F focalLength = cameraCali.getFocalLength();
+//    	float fovyRadians = (float)(2 * Math.atan(0.5f * size.getData()[1] / focalLength.getData()[1]));
+//    	float fovRadians = (float)(2 * Math.atan(0.5f * size.getData()[0] / focalLength.getData()[0]));
+//    	
+    	// Set transformations:
+    	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
+              trackableResult.getPose()).getData();
+    	Matrix.rotateM(modelViewMatrix, 0, 180.0f, 1.0f, 0, 0);
+    	com.threed.jpct.Matrix m = new com.threed.jpct.Matrix();
+    	m.setDump(modelViewMatrix);
+        cam.setBack(m);
+//        cam.setFovAngle(fovRadians);
+//        cam.setYFovAngle(fovyRadians);
     }
     
     private void Render3DModel(TrackableResult tr)
