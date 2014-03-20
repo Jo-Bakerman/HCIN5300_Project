@@ -86,6 +86,13 @@ public abstract class MeshObject
         
     }
     
+    public void zeroBased(short[] a)
+    {
+    	for(int i=0; i<a.length; ++i)
+    	{
+    		a[i] = (short)(a[i] - 1);
+    	}
+    }  
     
     public abstract Buffer getBuffer(BUFFER_TYPE bufferType);
     

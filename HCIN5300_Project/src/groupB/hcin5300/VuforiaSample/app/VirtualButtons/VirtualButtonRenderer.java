@@ -5,7 +5,6 @@
 
 package groupB.hcin5300.VuforiaSample.app.VirtualButtons;
 
-import java.io.FileNotFoundException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -20,8 +19,6 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.qualcomm.vuforia.Area;
-import com.qualcomm.vuforia.CameraCalibration;
-import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.ImageTargetResult;
 import com.qualcomm.vuforia.Rectangle;
 import com.qualcomm.vuforia.Renderer;
@@ -29,19 +26,9 @@ import com.qualcomm.vuforia.State;
 import com.qualcomm.vuforia.Tool;
 import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
-import com.qualcomm.vuforia.Vec2F;
 import com.qualcomm.vuforia.VirtualButton;
 import com.qualcomm.vuforia.VirtualButtonResult;
 import com.qualcomm.vuforia.Vuforia;
-import com.threed.jpct.Camera;
-import com.threed.jpct.FrameBuffer;
-import com.threed.jpct.Light;
-import com.threed.jpct.Loader;
-import com.threed.jpct.Object3D;
-import com.threed.jpct.SimpleVector;
-import com.threed.jpct.World;
-import com.threed.jpct.util.MemoryHelper;
-
 
 import groupB.hcin5300.SampleApplication.SampleApplicationSession;
 import groupB.hcin5300.SampleApplication.utils.CubeShaders;
@@ -55,7 +42,6 @@ import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
-import groupB.hcin5300.VuforiaSample.R;
 
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 {
@@ -117,13 +103,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     // Constants:
     //static private float kTeapotScale = 6.f; //1.f;
     
-    // test obj file
-    private Object3D thing;
-	private Light sun = null;
-	private World world = null;
-	private Camera cam = null;
-	private FrameBuffer fb = null;
-    
     public VirtualButtonRenderer(VirtualButtons activity,
         SampleApplicationSession session)
     {
@@ -138,36 +117,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
         vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);       
            
-        loadJPCTparams();
         loadElementSpecs();
     } 
-    
-    public void loadJPCTparams()
-    {
-    	 try {
-  			thing = loadModel("res/raw/rock_obj.obj", "res/raw/rock_mtl.mtl", 10);
-  		} catch (FileNotFoundException e) {
-  			// TODO Auto-generated catch block
-  			e.printStackTrace();
-  		}
-    	 
-    	world = new World();
-    	world.setAmbientLight(20, 20, 20);
-
-    	sun = new Light(world);
-    	sun.setIntensity(250, 250, 250);
-    	
-    	thing.build();
-		world.addObject(thing);
-		cam = world.getCamera();
-		
-		SimpleVector sv = new SimpleVector();
-		sv.set(thing.getTransformedCenter());
-		sv.y -= 100;
-		sv.z -= 100;
-		sun.setPosition(sv);
-		MemoryHelper.compact();
-    }
     
     public void loadElementSpecs()
     {
@@ -203,11 +154,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         
         // Call Vuforia function to handle render surface size changes:
         vuforiaAppSession.onSurfaceChanged(width, height);
-        
-        if (fb != null) {
-            fb.dispose();
-       }
-       fb = new FrameBuffer(width, height);
     }
     
     
@@ -219,11 +165,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             return;
         
         // Call our function to render content
-        renderFrame();
-        
-        world.renderScene(fb);
-        world.draw(fb);
-        fb.display();
+        renderFrame();              
     }
     
     
@@ -326,7 +268,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             	applyElementGroupHighlight(state);
             
             RenderVirtualButtons(trackableResult);
-            //RenderObjModel(trackableResult);
             RenderSelectionTexture(state);
             Render3DModel(trackableResult);          
         
@@ -337,31 +278,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         
         Renderer.getInstance().end();       
-    }
-    
-    private void RenderObjModel(TrackableResult trackableResult)
-    {
-//    	const QCAR::CameraCalibration& cameraCalibration = QCAR::CameraDevice::getInstance().getCameraCalibration();
-//    	QCAR::Vec2F size = cameraCalibration.getSize();
-//    	QCAR::Vec2F focalLength = cameraCalibration.getFocalLength();
-//    	float fovyRadians = 2 * atan(0.5f * size.data[1] / focalLength.data[1]);
-//    	float fovRadians = 2 * atan(0.5f * size.data[0] / focalLength.data[0]);
-    	
-    	CameraCalibration cameraCali = CameraDevice.getInstance().getCameraCalibration();
-    	Vec2F size = cameraCali.getSize();
-    	Vec2F focalLength = cameraCali.getFocalLength();
-    	float fovyRadians = (float)(2 * Math.atan(0.5f * size.getData()[1] / focalLength.getData()[1]));
-    	float fovRadians = (float)(2 * Math.atan(0.5f * size.getData()[0] / focalLength.getData()[0]));
-    	
-    	// Set transformations:
-    	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
-              trackableResult.getPose()).getData();
-    	Matrix.rotateM(modelViewMatrix, 0, 180.0f, 1.0f, 0, 0);
-    	com.threed.jpct.Matrix m = new com.threed.jpct.Matrix();
-    	m.setDump(modelViewMatrix);
-        cam.setBack(m);
-//        cam.setFovAngle(fovRadians);
-//        cam.setYFovAngle(fovyRadians);
     }
     
     private void Render3DModel(TrackableResult tr)
@@ -715,8 +631,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		currLevel = 5;
     		break;
     	}
-    	
-    	
     }
     
     private void RenderVirtualButtons(TrackableResult trackableResult)
@@ -850,26 +764,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         return vbCounter;
     }
 
-    private Object3D loadModel(String filename, String mtlname, float scale) 
-    		throws FileNotFoundException {		
-        Object3D[] model = Loader.loadOBJ
-        		(mActivity.getResources().openRawResource(R.raw.rock_obj),
-        		 mActivity.getResources().openRawResource(R.raw.rock_mtl),
-        		 scale);
-        Object3D o3d = new Object3D(0);
-        Object3D temp = null;
-        for (int i = 0; i < model.length; i++) {
-            temp = model[i];
-            temp.setCenter(SimpleVector.ORIGIN);
-            temp.rotateX((float)( -.5*Math.PI));
-            temp.rotateMesh();
-            temp.setRotationMatrix(new com.threed.jpct.Matrix());
-            o3d = Object3D.mergeObjects(o3d, temp);
-            o3d.build();
-        }
-        return o3d;
-    }
-    
     private void RenderSelectionTexture(State state)
     {
     	// highlight the pressed button

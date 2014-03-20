@@ -1115,6 +1115,7 @@ public class Sphere extends MeshObject {
         		208, 209, 212, 
         		209, 210, 212, 
         		210, 196, 212 };
+        zeroBased(SPHERE_INDICES);
         mIndBuff = fillBuffer(SPHERE_INDICES);
         indicesNumber = SPHERE_INDICES.length;
     }
@@ -1155,6 +1156,5 @@ public class Sphere extends MeshObject {
         }
         
         return result;
-    }
-    
+    }    
 }
