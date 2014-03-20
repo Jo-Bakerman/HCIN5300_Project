@@ -214,6 +214,9 @@ public class VirtualButtons extends Activity implements
        
        mTextures.add(Texture.loadTextureFromApk("Groups/Pb-Group.png",
                getAssets())); // 7
+       
+       mTextures.add(Texture.loadTextureFromApk("VirtualButtons/button-selection.png",
+               getAssets())); // 8
     }
     
     

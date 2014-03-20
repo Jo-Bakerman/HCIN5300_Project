@@ -72,13 +72,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     // virtual button coordinates
     public static final int RECTCOUNT = 7;
     Rectangle vbRectangle[] = new Rectangle[RECTCOUNT];
-    public RectCoords agC = new RectCoords(21.45f, 12.35f, 35.15f, -2.25f);
-    public RectCoords pbC = new RectCoords(64.25f, -3.15f, 77.55f, -16.95f);
-    public RectCoords l1C = new RectCoords(-80f, -70f, -60f, -80f);
-    public RectCoords l2C = new RectCoords(-50f, -70f, -30f, -80f);
-    public RectCoords l3C = new RectCoords(-20f, -70f, 0f, -80f);
-    public RectCoords l4C = new RectCoords(10f, -70f, 30f, -80f);
-    public RectCoords l5C = new RectCoords(40f, -70f, 60f, -80f);
+    public RectCoords agC = new RectCoords(21f, 24.5f, 35f, 10f);
+    public RectCoords pbC = new RectCoords(63.5f, 10f, 77.5f, -5f);
+    
+    public RectCoords l1C = new RectCoords(-128f, -74.5f, -92f, -87.5f);
+    public RectCoords l2C = new RectCoords(-72.3f, -74.1f, -36.2f, -87f);
+    public RectCoords l3C = new RectCoords(-17.5f, -73.5f, 18.5f, -86.3f);
+    public RectCoords l4C = new RectCoords(38f, -73f, 74f, -86.1f);
+    public RectCoords l5C = new RectCoords(93f, -73f, 129f, -86f);   
     
     //private Teapot mTeapot = new Teapot();
     //private Sphere mTeapot = new Sphere(); 
@@ -135,7 +136,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
         vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
         vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
-        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);
+        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);       
            
         loadJPCTparams();
         loadElementSpecs();
@@ -144,7 +145,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     public void loadJPCTparams()
     {
     	 try {
-  			thing = loadModel("res/raw/rock_obj.obj", "res/raw/rock_mtl.mtl", 1);
+  			thing = loadModel("res/raw/rock_obj.obj", "res/raw/rock_mtl.mtl", 10);
   		} catch (FileNotFoundException e) {
   			// TODO Auto-generated catch block
   			e.printStackTrace();
@@ -325,8 +326,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             	applyElementGroupHighlight(state);
             
             RenderVirtualButtons(trackableResult);
-            RenderObjModel(trackableResult);
-            Render3DModel(trackableResult);
+            //RenderObjModel(trackableResult);
+            RenderSelectionTexture(state);
+            Render3DModel(trackableResult);          
         
             SampleUtils.checkGLError("VirtualButtons renderFrame");         
         }
@@ -345,12 +347,12 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 //    	float fovyRadians = 2 * atan(0.5f * size.data[1] / focalLength.data[1]);
 //    	float fovRadians = 2 * atan(0.5f * size.data[0] / focalLength.data[0]);
     	
-//    	CameraCalibration cameraCali = CameraDevice.getInstance().getCameraCalibration();
-//    	Vec2F size = cameraCali.getSize();
-//    	Vec2F focalLength = cameraCali.getFocalLength();
-//    	float fovyRadians = (float)(2 * Math.atan(0.5f * size.getData()[1] / focalLength.getData()[1]));
-//    	float fovRadians = (float)(2 * Math.atan(0.5f * size.getData()[0] / focalLength.getData()[0]));
-//    	
+    	CameraCalibration cameraCali = CameraDevice.getInstance().getCameraCalibration();
+    	Vec2F size = cameraCali.getSize();
+    	Vec2F focalLength = cameraCali.getFocalLength();
+    	float fovyRadians = (float)(2 * Math.atan(0.5f * size.getData()[1] / focalLength.getData()[1]));
+    	float fovRadians = (float)(2 * Math.atan(0.5f * size.getData()[0] / focalLength.getData()[0]));
+    	
     	// Set transformations:
     	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
               trackableResult.getPose()).getData();
@@ -396,10 +398,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     					tr, meshObjects.get(i), meshTextures.get(i), 
     					    meshTransls.get(i), meshScales.get(i));
     		}
-    		
-    		
-    		
-    		
+
     		// render text objects in the current level
     		/*
     		for(int k=0; k<textObjects.size; ++k)
@@ -466,13 +465,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				// first Ag object in level 1
 				meshObjects.add(AgLvl11);
 				meshTextures.add(mTextures.get(0));
-				meshTransls.add(new Vector3D(10.0f, 10.0f, 0.0f));
+				meshTransls.add(new Vector3D(-50.0f, 10.0f, 0.0f));
 				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
 				
 				// second Ag object in level 1...
 				meshObjects.add(AgLvl12);
 				meshTextures.add(mTextures.get(2));
-				meshTransls.add(new Vector3D(20.0f, 0.0f, 0.0f));
+				meshTransls.add(new Vector3D(50.0f, 0.0f, 0.0f));
 				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 			}
 			else // Pb
@@ -500,13 +499,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				// first Pb object in level 2
 				meshObjects.add(PbLvl21);
 				meshTextures.add(mTextures.get(4));
-				meshTransls.add(new Vector3D(0.0f, 10.0f, 5.0f));
+				meshTransls.add(new Vector3D(0.0f, 50.0f, 10.0f));
 				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));  	
 				
 				// second Pb object in level 2
 				meshObjects.add(PbLvl22);
 				meshTextures.add(mTextures.get(5));
-				meshTransls.add(new Vector3D(0.0f, 0.0f, 0.0f));
+				meshTransls.add(new Vector3D(-50.0f, 0.0f, 0.0f));
 				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 			}
 			break;
@@ -637,16 +636,16 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	case 0: // Ag group
         		groupTexture = 6;
         		tx = -22.5f;
-        		ty = -3.0f;
-        		sx = 146.0f;
+        		ty = 10f;
+        		sx = 147.0f;
         		sy = 64.0f; 
         		break;
         	case 1: // Pb group
         		groupTexture = 7;
         		tx = 78.0f;
-        		ty = 12.0f;
-        		sx = 59.0f;
-        		sy = 61.0f; 
+        		ty = 25.0f;
+        		sx = 58.0f;
+        		sy = 62.0f; 
         		break;
         	}
         	
@@ -716,6 +715,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		currLevel = 5;
     		break;
     	}
+    	
+    	
     }
     
     private void RenderVirtualButtons(TrackableResult trackableResult)
@@ -767,7 +768,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             // single
             // draw call. This is more efficient than having multiple
             // glDrawArray calls
-            vbCounter = fillVBvertices(vbCounter, buttonIndex, vbVertices);              
+            if(buttonIndex == 0 || buttonIndex == 1)
+            	vbCounter = fillVBvertices(vbCounter, buttonIndex, vbVertices);              
         }
         
         // We only render if there is something on the array
@@ -798,7 +800,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             SampleUtils.checkGLError("VirtualButtons drawButton");
             
             GLES20.glDisableVertexAttribArray(vbVertexHandle);
-        }                  
+        }                 
     }
     
     private short fillVBvertices(short vbC, int buttonIndex, float[] vbVertices)
@@ -866,6 +868,85 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             o3d.build();
         }
         return o3d;
+    }
+    
+    private void RenderSelectionTexture(State state)
+    {
+    	// highlight the pressed button
+    	if(elementSelected == true)
+    	{
+    		float tx = 0.0f;
+        	float ty = 0.0f;
+        	float tz = 0.0f;
+        	
+        	float sx = 50.0f;
+        	float sy = 25.0f;
+        	float sz = 1.0f;
+        	
+        	int selectionTexture = 8;
+        	
+        	Plane selectionPlane = new Plane();
+        	TrackableResult trackableResult = state.getTrackableResult(0);
+        	assert (trackableResult.getType() == ImageTargetResult
+                    .getClassType());
+        	float[] modelViewMatrix = Tool.convertPose2GLMatrix(
+                    trackableResult.getPose()).getData();
+        	float[] modelViewProjection = new float[16];
+        	
+        	switch(currLevel)
+        	{
+        	case 1: 
+        		tx = -110f;
+        		ty = -81f;
+        		break;
+        	case 2:
+        		tx = -54.25f;
+        		ty = -80.55f;
+        		break;
+        	case 3:
+        		tx = 0;
+        		ty = -79.9f;
+        		break;
+        	case 4:
+        		tx = 56;
+        		ty = -79.55f;
+        		break;
+        	case 5:
+        		tx = 111;
+        		ty = -79.5f;
+        		break;
+        	}
+        	
+        	Matrix.translateM(modelViewMatrix, 0, 
+    				tx, ty, tz);       
+            Matrix.scaleM(modelViewMatrix, 0, 
+            		sx, sy, sz);   
+            Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
+                .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
+            
+            GLES20.glUseProgram(shaderProgramID);
+        	GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
+                	false, 0, selectionPlane.getVertices());
+            GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
+                	false, 0, selectionPlane.getNormals());
+            GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+                	GLES20.GL_FLOAT, false, 0, selectionPlane.getTexCoords());
+            
+            GLES20.glEnableVertexAttribArray(vertexHandle);
+            GLES20.glEnableVertexAttribArray(normalHandle);
+            GLES20.glEnableVertexAttribArray(textureCoordHandle);
+        	
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 
+            		mTextures.get(selectionTexture).mTextureID[0]);   	
+        	
+            GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
+                modelViewProjection, 0);
+            GLES20.glUniform1i(texSampler2DHandle, 0);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLES,
+            	6, GLES20.GL_UNSIGNED_SHORT,
+                selectionPlane.getIndices());
+    	}
     }
 }
 
