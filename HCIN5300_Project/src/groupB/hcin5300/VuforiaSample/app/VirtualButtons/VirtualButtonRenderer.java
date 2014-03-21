@@ -39,6 +39,7 @@ import groupB.hcin5300.SampleApplication.utils.RectCoords;
 import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
 import groupB.hcin5300.SampleApplication.utils.Sphere;
+import groupB.hcin5300.SampleApplication.utils.Cube;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
@@ -122,9 +123,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     public void loadElementSpecs()
     {
-    	AgLvl11 = new Sphere();
-    	AgLvl12 = new Sphere();
-    	AgLvl21 = new Sphere();
+    	AgLvl11 = new Cube();
+    	AgLvl12 = new Cube();
+    	AgLvl21 = new Cube();
     	
     	PbLvl11 = new Sphere();
     	PbLvl21 = new Sphere();
