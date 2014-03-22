@@ -470,8 +470,7 @@ public class Sphere extends MeshObject {
         		, 0.605815, 0.935908
         		, 1.000000, 0.939455
         		, 0.741312, 1.000000 };
-        mTexCoordBuff = fillBuffer(SPHERE_TEX_COORDS);
-        
+        mTexCoordBuff = fillBuffer(SPHERE_TEX_COORDS);       
     }
     
     

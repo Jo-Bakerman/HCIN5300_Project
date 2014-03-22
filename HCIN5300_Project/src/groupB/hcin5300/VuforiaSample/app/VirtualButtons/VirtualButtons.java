@@ -217,8 +217,10 @@ public class VirtualButtons extends Activity implements
        
        mTextures.add(Texture.loadTextureFromApk("VirtualButtons/button-selection.png",
                getAssets())); // 8
-    }
-    
+       
+       mTextures.add(Texture.loadTextureFromApk("Planes/ag-level1/ag-level1.png",
+               getAssets())); // 9
+    }   
     
     // Called when the activity will start interacting with the user.
     @Override
