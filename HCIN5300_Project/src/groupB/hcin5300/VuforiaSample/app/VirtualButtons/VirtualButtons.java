@@ -51,7 +51,6 @@ import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenu;
 import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenuGroup;
 import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenuInterface;
 
-
 // The main activity for the VirtualButtons sample. 
 public class VirtualButtons extends Activity implements
     SampleApplicationControl, SampleAppMenuInterface
@@ -134,7 +133,10 @@ public class VirtualButtons extends Activity implements
         addButtonToToggle(4);
         addButtonToToggle(5);
         addButtonToToggle(6);
+        
+        
     }
+    
     
     public void ElementIsSelected()
     {
@@ -148,6 +150,7 @@ public class VirtualButtons extends Activity implements
         addButtonToToggle(4);
         addButtonToToggle(5);
         addButtonToToggle(6);
+               
     }
     
     // Process Single Tap event to trigger autofocus

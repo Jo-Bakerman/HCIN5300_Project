@@ -58,6 +58,7 @@
       If this attribute is not set, the default value 'standard' is used, which
       would allow the activity to be launched multiple times.
     -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
         android:icon="@drawable/icon"
         android:label="@string/app_name"
