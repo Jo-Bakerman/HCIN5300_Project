@@ -386,8 +386,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				// first Ag object in level 4
 				meshObjects.add(AgLvl41);
 				meshTextures.add(mTextures.get(9));
-				meshTransls.add(new Vector3D(0.0f, 8.0f, 15.0f));
-				meshScales.add(new Vector3D(5.0f, 10.0f, 1.0f));
+				meshTransls.add(new Vector3D(0.0f, 5.0f, 15.0f));
+				meshScales.add(new Vector3D(5.0f, 20.0f, 1.0f));
 			}
 			else // Pb
 			{
