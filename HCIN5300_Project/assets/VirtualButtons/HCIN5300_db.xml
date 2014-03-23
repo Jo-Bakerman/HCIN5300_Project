@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
   <Tracking>
-      <ImageTarget name="periodic_table3" size="278.980011 191.983978">
-      <VirtualButton name="Ag" rectangle="21 24.5 35 10" enabled="true" />
-      <VirtualButton name="Pb" rectangle="63.5 10 77.5 -5" enabled="true" />
-      <VirtualButton name="Overview" rectangle="-128 -74.5 -92 -87.5" enabled="true" />
-      <VirtualButton name="Characteristics" rectangle="-72.3 -74.1 -36.2 -87" enabled="true" />
-      <VirtualButton name="Model" rectangle="-17.5 -73.5 18.5 -86.3" enabled="true" />
-      <VirtualButton name="History" rectangle="38 -73 74 -86.1" enabled="true" />
-      <VirtualButton name="Applications" rectangle="93 -73 129 -86" enabled="true" />
+    <ImageTarget name="periodic_table4" size="278.980011 191.983978" >
+      <VirtualButton name="Ag" rectangle="21.2 33 35.2 19" enabled="true" />
+      <VirtualButton name="Pb" rectangle="63.7 18.5 77.7 3.5" enabled="true" />      
+      <VirtualButton name="Overview" rectangle="-119 -49 -91 -59" enabled="true" />
+      <VirtualButton name="Characteristics" rectangle="-86 -49 -58 -59" enabled="true" />
+      <VirtualButton name="Model" rectangle="-53 -49 -25 -59" enabled="true" />
+      <VirtualButton name="History" rectangle="57 -50 85 -60" enabled="true" />
+      <VirtualButton name="Applications" rectangle="91 -50 119 -60" enabled="true" />
     </ImageTarget>
   </Tracking>
 </QCARConfig>

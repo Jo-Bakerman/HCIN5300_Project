@@ -55,6 +55,7 @@ import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
 import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Cube;
+import groupB.hcin5300.SampleApplication.utils.TextPlane;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
@@ -76,14 +77,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     // virtual button coordinates
     public static final int RECTCOUNT = 7;
     Rectangle vbRectangle[] = new Rectangle[RECTCOUNT];
-    public RectCoords agC = new RectCoords(21f, 24.5f, 35f, 10f);
-    public RectCoords pbC = new RectCoords(63.5f, 10f, 77.5f, -5f);
+    public RectCoords agC = new RectCoords(21.2f, 33f, 35.2f, 19f);
+    public RectCoords pbC = new RectCoords(63.7f, 18.5f, 77.7f, 3.5f);
     
-    public RectCoords l1C = new RectCoords(-128f, -74.5f, -92f, -87.5f);
-    public RectCoords l2C = new RectCoords(-72.3f, -74.1f, -36.2f, -87f);
-    public RectCoords l3C = new RectCoords(-17.5f, -73.5f, 18.5f, -86.3f);
-    public RectCoords l4C = new RectCoords(38f, -73f, 74f, -86.1f);
-    public RectCoords l5C = new RectCoords(93f, -73f, 129f, -86f);   
+    public RectCoords l1C = new RectCoords(-119f, -49f, -91f, -59f);
+    public RectCoords l2C = new RectCoords(-86f, -49f, -58f, -59f);
+    public RectCoords l3C = new RectCoords(-53f, -49f, -25f, -59f);
+    public RectCoords l4C = new RectCoords(57f, -50f, 85f, -60f);
+    public RectCoords l5C = new RectCoords(91f, -50f, 119f, -60f);   
     
     //private Teapot mTeapot = new Teapot();
     //private Sphere mTeapot = new Sphere(); 
@@ -96,6 +97,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     MeshObject AgLvl11;
     MeshObject AgLvl12;
     MeshObject AgLvl21;
+    MeshObject AgLvl41;
     
     // Pb objects
     MeshObject PbLvl11;
@@ -143,6 +145,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	AgLvl11 = new Cube();
     	AgLvl12 = new Cube();
     	AgLvl21 = new Cube();
+    	AgLvl41 = new TextPlane("ag-level1", mActivity);
     	
     	PbLvl11 = new Sphere();
     	PbLvl21 = new Sphere();
@@ -329,16 +332,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		Vector<MeshObject> meshObjects = new Vector<MeshObject>();
     		Vector<Texture> meshTextures = new Vector<Texture>();
     		Vector<Vector3D> meshTransls = new Vector<Vector3D>();
-    		Vector<Vector3D> meshScales = new Vector<Vector3D>();
-    		
-    		// an array of text objects to be rendered in the current level
-    		// and arrays of their translations and scales
-    		/*
-    		Vector<textObject> textObjects = new Vector<textObject>();
-    		Vector<Texture> textTextures = new Vector<Texture>();
-    		Vector<Vector3D> textTransls = new Vector<Vector3D>();
-    		Vector<Vector3D> textScales = new Vector<Vector3D>();
-    		*/   		
+    		Vector<Vector3D> meshScales = new Vector<Vector3D>(); 
     		
     		// add objects and textures associated with the selected level
     		LoadLevelObjects(meshObjects, meshTextures, meshTransls, meshScales);
@@ -354,58 +348,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     					tr, meshObjects.get(i), meshTextures.get(i), 
     					    meshTransls.get(i), meshScales.get(i));
     		}
-
-    		// render text objects in the current level
-    		/*
-    		for(int k=0; k<textObjects.size; ++k)
-    		{
-    			
-    		}
-    		*/ 		
-    	}	       	
-            
-    		/*
-            // Scale 3D model
-            float[] modelViewScaled = modelViewMatrix;
-            Matrix.scaleM(modelViewScaled, 0, kTeapotScale, kTeapotScale,
-            kTeapotScale);
-            
-            // translate 3D model
-            Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f, 10.0f);
-            
-            float[] modelViewProjectionScaled = new float[16];
-            Matrix.multiplyMM(modelViewProjectionScaled, 0, vuforiaAppSession
-                .getProjectionMatrix().getData(), 0, modelViewScaled, 0);
-            
-            
-            // Render 3D model
-            GLES20.glUseProgram(shaderProgramID);
-            
-            GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                false, 0, mTeapot.getVertices());
-            GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
-                false, 0, mTeapot.getNormals());
-            GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
-            
-            GLES20.glEnableVertexAttribArray(vertexHandle);
-            GLES20.glEnableVertexAttribArray(normalHandle);
-            GLES20.glEnableVertexAttribArray(textureCoordHandle);
-            
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                thisTexture.mTextureID[0]);
-            GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
-                modelViewProjectionScaled, 0);
-            GLES20.glUniform1i(texSampler2DHandle, 0);
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES,
-                mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                mTeapot.getIndices());
-            
-            GLES20.glDisableVertexAttribArray(vertexHandle);
-            GLES20.glDisableVertexAttribArray(normalHandle);
-            GLES20.glDisableVertexAttribArray(textureCoordHandle); 
-            */                          
+   	
+    	}	       	                        
     }
     
     private void LoadLevelObjects(Vector<MeshObject> meshObjects,
@@ -421,14 +365,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				// first Ag object in level 1
 				meshObjects.add(AgLvl11);
 				meshTextures.add(mTextures.get(0));
-				meshTransls.add(new Vector3D(-50.0f, 10.0f, 0.0f));
-				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
+				meshTransls.add(new Vector3D(-10.0f, 10.0f, 10.0f));
+				meshScales.add(new Vector3D(10.0f, 10.0f, 10.0f));
 				
 				// second Ag object in level 1...
 				meshObjects.add(AgLvl12);
 				meshTextures.add(mTextures.get(2));
-				meshTransls.add(new Vector3D(50.0f, 0.0f, 0.0f));
-				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+				meshTransls.add(new Vector3D(10.0f, 0.0f, 10.0f));
+				meshScales.add(new Vector3D(10.0f, 10.0f, 10.0f));
 			}
 			else // Pb
 			{
@@ -436,7 +380,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				meshObjects.add(PbLvl11);
 				meshTextures.add(mTextures.get(3));
 				meshTransls.add(new Vector3D(0.0f, 10.0f, 10.0f));
-				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));
+				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 				
 				// second Pb object in level 1...
 			}
@@ -447,7 +391,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				// first Ag object in level 2
 				meshObjects.add(AgLvl21);
 				meshTextures.add(mTextures.get(1));
-				meshTransls.add(new Vector3D(0.0f, 10.0f, 0.0f));
+				meshTransls.add(new Vector3D(0.0f, 5.0f, 0.0f));
 				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 			}
 			else // Pb
@@ -455,13 +399,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				// first Pb object in level 2
 				meshObjects.add(PbLvl21);
 				meshTextures.add(mTextures.get(4));
-				meshTransls.add(new Vector3D(0.0f, 50.0f, 10.0f));
+				meshTransls.add(new Vector3D(0.0f, 10.0f, 10.0f));
 				meshScales.add(new Vector3D(3.0f, 3.0f, 3.0f));  	
 				
 				// second Pb object in level 2
 				meshObjects.add(PbLvl22);
 				meshTextures.add(mTextures.get(5));
-				meshTransls.add(new Vector3D(-50.0f, 0.0f, 0.0f));
+				meshTransls.add(new Vector3D(-10.0f, 0.0f, 0.0f));
 				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 			}
 			break;
@@ -478,7 +422,11 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 		case 4:
 			if(elementIndex == 0) // Ag
 			{
-				
+				// first Ag object in level 4
+				meshObjects.add(AgLvl41);
+				meshTextures.add(mTextures.get(9));
+				meshTransls.add(new Vector3D(0.0f, 8.0f, 15.0f));
+				meshScales.add(new Vector3D(5.0f, 10.0f, 1.0f));
 			}
 			else // Pb
 			{
@@ -507,10 +455,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                 tr.getPose()).getData();
     	float[] modelViewProjection = new float[16];
     	
+    	Matrix.scaleM(modelViewMatrix, 0, 
+        		mS.x, mS.y, mS.z); 
     	Matrix.translateM(modelViewMatrix, 0, 
-    			mTr.x, mTr.y, mTr.z);       
-        Matrix.scaleM(modelViewMatrix, 0, 
-        		mS.x, mS.y, mS.z);   
+    			mTr.x, mTr.y, mTr.z);                
         Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
             .getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
         
@@ -592,14 +540,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	case 0: // Ag group
         		groupTexture = 6;
         		tx = -22.5f;
-        		ty = 10f;
+        		ty = 19f;
         		sx = 147.0f;
         		sy = 64.0f; 
         		break;
         	case 1: // Pb group
         		groupTexture = 7;
         		tx = 78.0f;
-        		ty = 25.0f;
+        		ty = 33.5f;
         		sx = 58.0f;
         		sy = 62.0f; 
         		break;
@@ -813,8 +761,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	float ty = 0.0f;
         	float tz = 0.0f;
         	
-        	float sx = 50.0f;
-        	float sy = 25.0f;
+        	float sx = 37.0f;
+        	float sy = 20.0f;
         	float sz = 1.0f;
         	
         	int selectionTexture = 8;
@@ -830,24 +778,24 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	switch(currLevel)
         	{
         	case 1: 
-        		tx = -110f;
-        		ty = -81f;
+        		tx = -105f;
+        		ty = -54f;
         		break;
         	case 2:
-        		tx = -54.25f;
-        		ty = -80.55f;
+        		tx = -72f;
+        		ty = -54f;
         		break;
         	case 3:
-        		tx = 0;
-        		ty = -79.9f;
+        		tx = -39;
+        		ty = -54f;
         		break;
         	case 4:
-        		tx = 56;
-        		ty = -79.55f;
+        		tx = 71;
+        		ty = -55f;
         		break;
         	case 5:
-        		tx = 111;
-        		ty = -79.5f;
+        		tx = 105;
+        		ty = -55f;
         		break;
         	}
         	
