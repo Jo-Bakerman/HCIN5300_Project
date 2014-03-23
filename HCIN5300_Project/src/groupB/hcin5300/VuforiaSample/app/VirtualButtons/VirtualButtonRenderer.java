@@ -5,6 +5,7 @@
 
 package groupB.hcin5300.VuforiaSample.app.VirtualButtons;
 
+import java.io.File;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,6 +18,20 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+
+//import java.io.File;
+//import java.io.BufferedReader;
+//import java.io.FileNotFoundException;
+//import java.io.FileOutputStream;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.InputStreamReader;
+//import java.io.OutputStreamWriter;
+//import java.io.PrintWriter;
+import java.io.FileWriter;
+import android.os.Environment;
+//import android.widget.TextView;
+//import android.widget.EditText;
 
 import com.qualcomm.vuforia.Area;
 import com.qualcomm.vuforia.ImageTargetResult;
@@ -43,6 +58,8 @@ import groupB.hcin5300.SampleApplication.utils.Cube;
 import groupB.hcin5300.SampleApplication.utils.TextPlane;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
+
+
 
 
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
@@ -221,9 +238,31 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         lineOpacityHandle = GLES20.glGetUniformLocation(vbShaderProgramID,
             "opacity");
         lineColorHandle = GLES20.glGetUniformLocation(vbShaderProgramID,
-            "color");     
+            "color");
+        
+     // Test Write to File
+        try
+        {
+	        // TODO: replace "logText.txt" with a string variable with participant name or id
+        	// File location : Public Downloads folder
+        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/logText.txt", true);
+	        fw.append("First Line\n");
+	        fw.close();
+	        Log.d("FileWriter","File was Created/Appended");
+        } catch (Exception e) {
+            Log.e("FileWriter","Did Not Create File");
+        }
+        try
+        {
+	        // TODO: replace "logText.txt" with a string variable with participant name or id
+        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/logText.txt", true);
+	        fw.append("Second Line\n");
+	        fw.close();
+	        Log.d("FileWriter","File was Appended");
+        } catch (Exception e) {
+        	Log.e("FileWriter","Did Not Create File2");
+        }
     }
-    
     
     private void renderFrame()
     {
