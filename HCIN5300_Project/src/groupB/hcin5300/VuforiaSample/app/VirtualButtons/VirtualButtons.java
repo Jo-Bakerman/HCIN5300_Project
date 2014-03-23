@@ -194,35 +194,55 @@ public class VirtualButtons extends Activity implements
     // for rendering.
     private void loadTextures()
     {
-    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereBrass.png",
-                getAssets())); // 0 
+    	mTextures.add(Texture.loadTextureFromApk("Groups/Ag-Group.png",
+                getAssets())); // 0
         
-    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereRed.png",
+        mTextures.add(Texture.loadTextureFromApk("Groups/Pb-Group.png",
                 getAssets())); // 1
-    	
-    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSpherePurple.png",
-                getAssets())); // 2
-    	
-        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
-                getAssets())); // 3
         
-       mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereGreen.png",
+        mTextures.add(Texture.loadTextureFromApk("VirtualButtons/button-selection.png",
+                getAssets())); // 2       
+        
+        //level 1 textures
+    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereRed.png",
+                getAssets())); // 3
+    	
+        mTextures.add(Texture.loadTextureFromApk("Planes/ag-level1/ag-level1.png",
                 getAssets())); // 4
+        
+        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
+                getAssets())); // 5   
+        
+        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level1/pb-level1.png",
+                getAssets())); // 6
+        
+        //level 2 textures
+        mTextures.add(Texture.loadTextureFromApk("Planes/ag-level2/ag-level2.png",
+                getAssets())); // 7
+        
+        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level2/pb-level2.png",
+                getAssets())); // 8
+    	
+        //level 3 textures
+    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSpherePurple.png",
+                getAssets())); // 9
+    	
+    	mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereOrange.png",
+                getAssets())); // 10
+    	
+    	//level 4 textures
+    	mTextures.add(Texture.loadTextureFromApk("Planes/ag-level4/ag-level4.png",
+                getAssets())); // 11
+    	
+    	mTextures.add(Texture.loadTextureFromApk("Planes/pb-level4/pb-level4.png",
+                getAssets())); // 12
+    	
+    	//level 5 textures
+    	mTextures.add(Texture.loadTextureFromApk("Planes/ag-level5/ag-level5.png",
+                getAssets())); // 13
        
-       mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereOrange.png",
-                getAssets())); // 5
-       
-       mTextures.add(Texture.loadTextureFromApk("Groups/Ag-Group.png",
-               getAssets())); // 6
-       
-       mTextures.add(Texture.loadTextureFromApk("Groups/Pb-Group.png",
-               getAssets())); // 7
-       
-       mTextures.add(Texture.loadTextureFromApk("VirtualButtons/button-selection.png",
-               getAssets())); // 8
-       
-       mTextures.add(Texture.loadTextureFromApk("Planes/ag-level1/ag-level1.png",
-               getAssets())); // 9
+       mTextures.add(Texture.loadTextureFromApk("Planes/pb-level5/pb-level5.png",
+               getAssets())); // 14
     }   
     
     // Called when the activity will start interacting with the user.
