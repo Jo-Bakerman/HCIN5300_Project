@@ -47,6 +47,7 @@ import com.qualcomm.vuforia.Vuforia;
 
 import groupB.hcin5300.SampleApplication.SampleApplicationSession;
 import groupB.hcin5300.SampleApplication.utils.CubeShaders;
+import groupB.hcin5300.SampleApplication.utils.ImportedMesh;
 import groupB.hcin5300.SampleApplication.utils.LineShaders;
 import groupB.hcin5300.SampleApplication.utils.MeshObject;
 import groupB.hcin5300.SampleApplication.utils.Plane;
@@ -55,7 +56,6 @@ import groupB.hcin5300.SampleApplication.utils.SampleUtils;
 import groupB.hcin5300.SampleApplication.utils.Teapot;
 import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Cube;
-import groupB.hcin5300.SampleApplication.utils.TextPlane;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
@@ -97,7 +97,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     MeshObject AgLvl11;
     MeshObject AgLvl12;
     MeshObject AgLvl21;
-    MeshObject AgLvl31;
+    MeshObject Ag3_orbits;
+    MeshObject Ag3_electrons;
+    MeshObject Ag3_neutrons;
+    MeshObject Ag3_protons;
     MeshObject AgLvl41;
     MeshObject AgLvl51;
     
@@ -105,7 +108,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     MeshObject PbLvl11;
     MeshObject PbLvl12;
     MeshObject PbLvl21;
-    MeshObject PbLvl31;
+    MeshObject Pb3_orbits;
+    MeshObject Pb3_electrons;
+    MeshObject Pb3_neutrons;
+    MeshObject Pb3_protons;
     MeshObject PbLvl41;
     MeshObject PbLvl51;
     
@@ -148,18 +154,24 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     public void loadElementSpecs()
     {
     	AgLvl11 = new Cube(); // placeholder
-    	AgLvl12 = new TextPlane("ag-level1", mActivity);
-    	AgLvl21 = new TextPlane("ag-level2", mActivity);
-    	AgLvl31 = new Cube(); // placeholder
-    	AgLvl41 = new TextPlane("ag-level4", mActivity);
-    	AgLvl51 = new TextPlane("ag-level5", mActivity);
+    	AgLvl12 = new ImportedMesh("Planes/ag-level1", mActivity);
+    	AgLvl21 = new ImportedMesh("Planes/ag-level2", mActivity);
+    	Ag3_orbits = new ImportedMesh("Bohr/Ag/orbits", mActivity);
+    	Ag3_electrons = new ImportedMesh("Bohr/Ag/electrons", mActivity);
+    	Ag3_neutrons = new ImportedMesh("Bohr/Ag/neutrons", mActivity);
+    	Ag3_protons = new ImportedMesh("Bohr/Ag/protons", mActivity);
+    	AgLvl41 = new ImportedMesh("Planes/ag-level4", mActivity);
+    	AgLvl51 = new ImportedMesh("Planes/ag-level5", mActivity);
     	
     	PbLvl11 = new Sphere(); // placeholder
-    	PbLvl12 = new TextPlane("pb-level1", mActivity);
-    	PbLvl21 = new TextPlane("pb-level2", mActivity);
-    	PbLvl31 = new Sphere(); //placeholder
-    	PbLvl41 = new TextPlane("pb-level4", mActivity);
-    	PbLvl51 = new TextPlane("pb-level5", mActivity);
+    	PbLvl12 = new ImportedMesh("Planes/pb-level1", mActivity);
+    	PbLvl21 = new ImportedMesh("Planes/pb-level2", mActivity);
+    	Pb3_orbits = new ImportedMesh("Bohr/Pb/orbits", mActivity);
+    	Pb3_electrons = new ImportedMesh("Bohr/Pb/electrons", mActivity);
+    	Pb3_neutrons = new ImportedMesh("Bohr/Pb/neutrons", mActivity);
+    	Pb3_protons = new ImportedMesh("Bohr/Pb/protons", mActivity);
+    	PbLvl41 = new ImportedMesh("Planes/pb-level4", mActivity);
+    	PbLvl51 = new ImportedMesh("Planes/pb-level5", mActivity);
     }
     
     // Called when the surface is created or recreated.
@@ -296,8 +308,11 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         // reflected as well,
         // therefore counter standard clockwise face culling will result in
         // "inside out" models.
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glCullFace(GLES20.GL_BACK);
+        //GLES20.glEnable(GLES20.GL_CULL_FACE);
+        //GLES20.glCullFace(GLES20.GL_BACK);
+        
+        GLES20.glDisable(GLES20.GL_CULL_FACE);
+        
         if (Renderer.getInstance().getVideoBackgroundConfig().getReflection() == VIDEO_BACKGROUND_REFLECTION.VIDEO_BACKGROUND_REFLECTION_ON)
             GLES20.glFrontFace(GLES20.GL_CW); // Front camera
         else
@@ -351,14 +366,12 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             //assert (textureIndex < mTextures.size());
             //Texture thisTexture = mTextures.get(textureIndex);
     		
-    		// render mesh objects in the current level
-    		for(int i=0; i<meshObjects.size(); ++i)
-    		{   			
+    		// render mesh objects in the current level 		
+    		for(int i=0; i<meshObjects.size(); ++i){   			
     			RenderMeshObject(
     					tr, meshObjects.get(i), meshTextures.get(i), 
     					    meshTransls.get(i), meshScales.get(i));
     		}
-   	
     	}	       	                        
     }
     
@@ -421,17 +434,31 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 		case 3:
 			if(elementIndex == 0) // Ag
 			{
-				meshObjects.add(AgLvl31);
-				meshTextures.add(mTextures.get(9));
-				meshTransls.add(new Vector3D(7.0f, 0.0f, 5.0f));
-				meshScales.add(new Vector3D(10.0f, 10.0f, 10.0f));
+				int meshCount = 4;
+				meshObjects.add(Ag3_orbits);
+				meshObjects.add(Ag3_electrons);
+				meshObjects.add(Ag3_neutrons);
+				meshObjects.add(Ag3_protons);
+				
+				for(int k=15;k<(15+meshCount);++k){
+					meshTextures.add(mTextures.get(k)); }			
+				for(int a=1;a<=meshCount;++a){
+					meshTransls.add(new Vector3D(17.0f, 5.0f, 5.0f));
+					meshScales.add(new Vector3D(5.0f, 5.0f, 5.0f)); }
 			}
 			else // Pb
 			{
-				meshObjects.add(PbLvl31);
-				meshTextures.add(mTextures.get(10));
-				meshTransls.add(new Vector3D(15.0f, 7.0f, 5.0f));
-				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+				int meshCount = 4;
+				meshObjects.add(Pb3_orbits);
+				meshObjects.add(Pb3_electrons);
+				meshObjects.add(Pb3_neutrons);
+				meshObjects.add(Pb3_protons);
+				
+				for(int k=19;k<(19+meshCount);++k){
+					meshTextures.add(mTextures.get(k)); }			
+				for(int a=1;a<=meshCount;++a){
+					meshTransls.add(new Vector3D(0.0f, 5.0f, 5.0f));
+					meshScales.add(new Vector3D(5.0f, 5.0f, 5.0f)); }
 			}
 			break;
 		case 4:
@@ -494,11 +521,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	false, 0, mO.getVertices());
         GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
         	false, 0, mO.getNormals());
-        GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-        	GLES20.GL_FLOAT, false, 0, mO.getTexCoords());
+        
+	    GLES20.glVertexAttribPointer(textureCoordHandle, 2,
+	        	GLES20.GL_FLOAT, false, 0, mO.getTexCoords());
         
         GLES20.glEnableVertexAttribArray(vertexHandle);
         GLES20.glEnableVertexAttribArray(normalHandle);
+        
         GLES20.glEnableVertexAttribArray(textureCoordHandle);
         
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -513,7 +542,9 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         
         GLES20.glDisableVertexAttribArray(vertexHandle);
         GLES20.glDisableVertexAttribArray(normalHandle);
-        GLES20.glDisableVertexAttribArray(textureCoordHandle);   						
+        
+        if(currLevel != 3)
+        	GLES20.glDisableVertexAttribArray(textureCoordHandle);   						
     }
     
     private Buffer fillBuffer(float[] array)

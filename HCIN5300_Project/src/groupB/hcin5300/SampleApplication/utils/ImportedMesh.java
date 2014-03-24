@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 
-public class TextPlane extends MeshObject {
+public class ImportedMesh extends MeshObject {
 	
 	private Buffer mVertBuff;
     private Buffer mTexCoordBuff;
@@ -21,15 +21,14 @@ public class TextPlane extends MeshObject {
     private int verticesNumber = 0;
     
     Activity mActivity;
-    private String rootD = "Planes/";
     
-    public TextPlane(String planeDirectory, Activity mAc)
+    public ImportedMesh(String objDirectory, Activity mAc)
     {
     	mActivity = mAc;
-        setVerts(rootD+planeDirectory+"/verts.txt");
-        setTexCoords(rootD+planeDirectory+"/tex.txt");
-        setNorms(rootD+planeDirectory+"/norms.txt");
-        setIndices(rootD+planeDirectory+"/indices.txt");
+        setVerts(objDirectory+"/verts.txt");
+        setTexCoords(objDirectory+"/tex.txt");
+        setNorms(objDirectory+"/norms.txt");
+        setIndices(objDirectory+"/indices.txt");
     }
     
     private void setVerts(String vertsFile){

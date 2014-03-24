@@ -243,6 +243,26 @@ public class VirtualButtons extends Activity implements
        
        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level5/pb-level5.png",
                getAssets())); // 14
+       
+       // Bohr Model
+       // Ag
+       mTextures.add(Texture.loadTextureFromApk("Bohr/orbits.png",
+               getAssets())); // 15
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/electrons.png",
+               getAssets())); // 16
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/neutrons.png",
+               getAssets())); // 17
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/protons.png",
+               getAssets())); // 18      
+       // Pb
+       mTextures.add(Texture.loadTextureFromApk("Bohr/orbits.png",
+               getAssets())); // 19
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/electrons.png",
+               getAssets())); // 20
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/neutrons.png",
+               getAssets())); // 21
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/protons.png",
+               getAssets())); // 22
     }   
     
     // Called when the activity will start interacting with the user.
