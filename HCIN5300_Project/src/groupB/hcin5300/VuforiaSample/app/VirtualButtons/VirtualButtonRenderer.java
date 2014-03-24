@@ -254,7 +254,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         }
         try
         {
-	        // TODO: replace "logText.txt" with a string variable with participant name or id
+	        // TODO: replace "logText.txt" with a string variable with participant name or id again
         	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/logText.txt", true);
 	        fw.append("Second Line\n");
 	        fw.close();

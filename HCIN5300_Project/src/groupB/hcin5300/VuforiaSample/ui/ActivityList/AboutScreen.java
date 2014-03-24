@@ -20,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import groupB.hcin5300.VuforiaSample.R;
@@ -34,6 +35,7 @@ public class AboutScreen extends Activity implements OnClickListener
     private TextView mAboutTextTitle;
     private String mClassToLaunch;
     private String mClassToLaunchPackage;
+    private EditText mEditText;
     
     
     @Override
@@ -53,10 +55,13 @@ public class AboutScreen extends Activity implements OnClickListener
         mClassToLaunch = mClassToLaunchPackage + "."
             + extras.getString("ACTIVITY_TO_LAUNCH");
         
+        // Try Comment out HTML content from menu
         mAboutWebText = (WebView) findViewById(R.id.about_html_text);
         
-        String aboutText = "";
-        try
+        String aboutText = "<p>Some intro text</p>" +
+        		"<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut " +
+        		"labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>";
+        /*try
         {
             InputStream is = getAssets().open(webText);
             BufferedReader reader = new BufferedReader(
@@ -70,7 +75,7 @@ public class AboutScreen extends Activity implements OnClickListener
         } catch (IOException e)
         {
             Log.e(LOGTAG, "About html loading failed");
-        }
+        }*/
         
         mAboutWebText.loadData(aboutText, "text/html", "UTF-8");
         
@@ -98,6 +103,9 @@ public class AboutScreen extends Activity implements OnClickListener
         switch (v.getId())
         {
             case R.id.button_start:
+                mEditText = (EditText) findViewById(R.id.edit_message);
+                String message = mEditText.getText().toString();
+                Log.d("TextMessage","Input Text = " + message);
                 startARActivity();
                 break;
         }

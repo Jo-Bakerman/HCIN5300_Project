@@ -60,5 +60,7 @@
     <string name="menu_button_level5">Applications</string>
         
     <string name="splash_screen_description">Vuforia Splash</string>
+    <string name="menu_about_text">This is what I want to write for the about text</string>
+    <string name="edit_message">Enter Full Name</string>
     
 </resources>

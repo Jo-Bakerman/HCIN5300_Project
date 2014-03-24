@@ -29,10 +29,21 @@
     <WebView
         android:id="@+id/about_html_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_below="@id/about_text_title"
-        android:layout_above="@id/button_start"
+       
         />
+    
+    <EditText android:id="@+id/edit_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/edit_message"
+        android:layout_below="@id/about_html_text"
+        
+         />
+
+
+    
         
 </RelativeLayout>
