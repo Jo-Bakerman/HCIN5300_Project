@@ -132,9 +132,7 @@ public class VirtualButtons extends Activity implements
         addButtonToToggle(3);
         addButtonToToggle(4);
         addButtonToToggle(5);
-        addButtonToToggle(6);
-        
-        
+        addButtonToToggle(6);               
     }
     
     

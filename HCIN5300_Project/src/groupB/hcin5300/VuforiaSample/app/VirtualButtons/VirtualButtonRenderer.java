@@ -60,8 +60,6 @@ import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 
 
-
-
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 {
     private static final String LOGTAG = "VirtualButtonRenderer";
@@ -148,7 +146,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
         vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);       
            
-        loadElementSpecs();
+        loadElementSpecs();            
     } 
     
     public void loadElementSpecs()
@@ -372,7 +370,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     					tr, meshObjects.get(i), meshTextures.get(i), 
     					    meshTransls.get(i), meshScales.get(i));
     		}
-    	}	       	                        
+    	}		 
     }
     
     private void LoadLevelObjects(Vector<MeshObject> meshObjects,
