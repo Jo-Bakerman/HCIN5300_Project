@@ -9,6 +9,7 @@ import java.io.File;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -58,6 +59,8 @@ import groupB.hcin5300.SampleApplication.utils.Sphere;
 import groupB.hcin5300.SampleApplication.utils.Cube;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
+import groupB.hcin5300.VuforiaSample.ui.ActivityList.AboutScreen;
+
 
 
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
@@ -131,6 +134,11 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     // Constants:
     //static private float kTeapotScale = 6.f; //1.f;
+    
+    // Log File Variables
+    String participant = AboutScreen.message;
+    String filename = participant.replace(" ", "");
+	//Calendar cal = Calendar.getInstance();
     
     public VirtualButtonRenderer(VirtualButtons activity,
         SampleApplicationSession session)
@@ -260,27 +268,24 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         lineColorHandle = GLES20.glGetUniformLocation(vbShaderProgramID,
             "color");
         
-     // Test Write to File
+     // Write to File
+        
         try
         {
-	        // TODO: replace "logText.txt" with a string variable with participant name or id
+	        // Write Header - Date/Time, Participant Name, Test Type
         	// File location : Public Downloads folder
-        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/logText.txt", true);
-	        fw.append("First Line\n");
+        	//cal = cal.getInstance();
+        	Calendar cal = Calendar.getInstance();
+        	String dateTime = cal.getTime().toString();
+        	//dateTime += ":" + Integer.toString(cal.get(Calendar.SECOND));
+        	String fileHead = dateTime + "\n" + participant + "\n" + "AR Test";
+        	
+        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
+	        fw.append( fileHead + "\n");
 	        fw.close();
-	        Log.d("FileWriter","File was Created/Appended");
+	        //Log.d("FileWriter","File was Created");
         } catch (Exception e) {
-            Log.e("FileWriter","Did Not Create File");
-        }
-        try
-        {
-	        // TODO: replace "logText.txt" with a string variable with participant name or id again
-        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/logText.txt", true);
-	        fw.append("Second Line\n");
-	        fw.close();
-	        Log.d("FileWriter","File was Appended");
-        } catch (Exception e) {
-        	Log.e("FileWriter","Did Not Create File2");
+            Log.e("FileWriter","Did Not Create File " + filename );
         }
     }
     
@@ -409,6 +414,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				meshTransls.add(new Vector3D(-4.0f, 2.5f, 10.0f));
 				meshScales.add(new Vector3D(6.0f, 30.0f, 1.0f));
 			}
+			
 			break;
 		case 2:
 			if(elementIndex == 0) // Ag
@@ -644,34 +650,85 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	{
     	case 0: // Ag
     		currLevel = 1; // reset to level 1
-    		if(elementIndex == -1)
+    		if(elementIndex == -1){
     			mActivity.ElementIsSelected();
+    			// Add Selected Element to File
+    			try
+    	        {
+    	        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
+    		        fw.append("Ag\n");
+    		        fw.append("-----\n");
+    		        fw.close();
+    		        //Log.d("FileWriter","File was Appended");
+    	        } catch (Exception e) {
+    	        	Log.e("FileWriter","Did Not Create File2");
+    	        }
+    		}
     		elementIndex = buttonIndex;
     		elementSelected = true;               		
     		break;
     	case 1: // Pb
     		currLevel = 1; // reset to level 1
-    		if(elementIndex == -1)
+    		if(elementIndex == -1){
     			mActivity.ElementIsSelected();
+    			// Add Selected Element to File
+    			try
+    	        {
+    	        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
+    		        fw.append("Pb\n");
+    		        fw.append("-----\n");
+    		        fw.close();
+    		        //Log.d("FileWriter","File was Appended");
+    	        } catch (Exception e) {
+    	        	Log.e("FileWriter","Did Not Create File2");
+    	        }
+    		}
     		elementIndex = buttonIndex;
     		elementSelected = true;
     		break;
     	case 2: // level1
+    		if(currLevel != 1)
+    			addLogEntry();
     		currLevel = 1;
     		break;
     	case 3: // level2
+    		if(currLevel != 2)
+    			addLogEntry();
     		currLevel = 2;
     		break;
     	case 4: // level3
+    		if(currLevel != 3)
+    			addLogEntry();
     		currLevel = 3;
     		break;
     	case 5: // level4
+    		if(currLevel != 4)
+    			addLogEntry();
     		currLevel = 4;
     		break;
     	case 6: // level5
+    		if(currLevel != 5)
+    			addLogEntry();
     		currLevel = 5;
     		break;
     	}
+    }
+    
+    private void addLogEntry()
+    {
+    	try
+        {
+			// **** Stores Previous Level & End Time of Prev Level
+			Calendar cal = Calendar.getInstance();
+			String dateTime = cal.getTime().toString();
+			String newLine = dateTime + ", " + "AR" + ", " + participant + ", " + Integer.toString(currLevel) + "\n";
+			
+        	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
+	        fw.append(newLine);
+	        fw.close();
+        } catch (Exception e) {
+        	Log.e("FileWriter","Did Not Create File2");
+        }
     }
     
     private void RenderVirtualButtons(TrackableResult trackableResult)

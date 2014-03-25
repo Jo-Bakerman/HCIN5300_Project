@@ -37,6 +37,8 @@ public class AboutScreen extends Activity implements OnClickListener
     private String mClassToLaunchPackage;
     private EditText mEditText;
     
+    public static String message;
+    
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -104,7 +106,7 @@ public class AboutScreen extends Activity implements OnClickListener
         {
             case R.id.button_start:
                 mEditText = (EditText) findViewById(R.id.edit_message);
-                String message = mEditText.getText().toString();
+                message = mEditText.getText().toString();
                 Log.d("TextMessage","Input Text = " + message);
                 startARActivity();
                 break;
