@@ -62,7 +62,6 @@ import groupB.hcin5300.SampleApplication.utils.Vector3D;
 import groupB.hcin5300.VuforiaSample.ui.ActivityList.AboutScreen;
 
 
-
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 {
     private static final String LOGTAG = "VirtualButtonRenderer";
