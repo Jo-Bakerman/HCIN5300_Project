@@ -114,7 +114,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     public boolean elementSelected = false;
     int elementIndex = -1;
-    int currLevel = 1;
+    int currLevel = -1;
     
     // Ag objects
     MeshObject AgLvl11;
@@ -158,8 +158,8 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     //static private float kTeapotScale = 6.f; //1.f;
     
     // Log File Variables
-    String participant = AboutScreen.message;
-    String filename = "ID"+participant.replace(" ", "");
+    String participant = "ID"+AboutScreen.message;
+    String filename = participant.replace(" ", "");
 	//Calendar cal = Calendar.getInstance();
     
     public VirtualButtonRenderer(VirtualButtons activity,
@@ -300,7 +300,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	Calendar cal = Calendar.getInstance();
         	String dateTime = cal.getTime().toString();
         	//dateTime += ":" + Integer.toString(cal.get(Calendar.SECOND));
-        	String fileHead = dateTime + "\n" + participant + "\n" + "AR Test";
+        	String fileHead = "\n" + dateTime + "\n" + participant + "\n" + "AR Test";
         	
         	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
 	        fw.append( fileHead + "\n");
@@ -961,6 +961,27 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             	6, GLES20.GL_UNSIGNED_SHORT,
                 selectionPlane.getIndices());
     	}
+    }
+    
+    public void addExitLog()
+    {
+    	try
+        {
+			// **** Stores Previous Level & End Time of Prev Level
+			Calendar cal = Calendar.getInstance();
+			String dateTime = cal.getTime().toString();
+			String newLine = dateTime + ", " + "AR" + ", " + 
+					participant + ", Exiting level " + Integer.toString(currLevel) + 
+					" & closing application \n";
+			
+        	FileWriter fw = new FileWriter
+        			(Environment.getExternalStoragePublicDirectory
+        					(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
+	        fw.append(newLine);
+	        fw.close();
+        } catch (Exception e) {
+        	Log.e("FileWriter","Did Not Create File2");
+        }
     }
 }
 

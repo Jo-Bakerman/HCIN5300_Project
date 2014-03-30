@@ -5,6 +5,8 @@
 
 package groupB.hcin5300.VuforiaSample.app.VirtualButtons;
 
+import java.io.FileWriter;
+import java.util.Calendar;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -15,6 +17,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -351,6 +354,8 @@ public class VirtualButtons extends Activity implements
     {
         Log.d(LOGTAG, "onDestroy");
         super.onDestroy();
+        mRenderer.addExitLog();
+        
         
         try
         {
@@ -366,7 +371,6 @@ public class VirtualButtons extends Activity implements
         
         System.gc();
     }
-    
     
     @Override
     public boolean onTouchEvent(MotionEvent event)
