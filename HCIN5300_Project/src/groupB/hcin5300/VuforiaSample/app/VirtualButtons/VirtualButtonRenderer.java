@@ -743,7 +743,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			// **** Stores Previous Level & End Time of Prev Level
 			Calendar cal = Calendar.getInstance();
 			String dateTime = cal.getTime().toString();
-			String newLine = dateTime + ", " + "AR" + ", " + participant + ", " + Integer.toString(currLevel) + "\n";
+			String newLine = dateTime + ", " + "AR" + ", " + participant + ", Exiting level " + Integer.toString(currLevel) + "\n";
 			
         	FileWriter fw = new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/" + filename + ".txt", true);
 	        fw.append(newLine);
