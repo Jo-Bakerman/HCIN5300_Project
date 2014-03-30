@@ -84,7 +84,30 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     public RectCoords l2C = new RectCoords(-86f, -49f, -58f, -59f);
     public RectCoords l3C = new RectCoords(-53f, -49f, -25f, -59f);
     public RectCoords l4C = new RectCoords(57f, -50f, 85f, -60f);
-    public RectCoords l5C = new RectCoords(91f, -50f, 119f, -60f);   
+    public RectCoords l5C = new RectCoords(91f, -50f, 119f, -60f); 
+    
+    final int AGG = 0;
+	final int PBG = 1;
+	final int BUTTONSELECTION = 2;
+	final int AG11 = 3;
+	final int AG12 = 4;
+	final int PB11 = 5;
+	final int PB12 = 6;
+	final int AG2 = 7;
+	final int PB2 = 8;
+	final int AG4 = 11;
+	final int PB4 = 12;
+	final int AG5 = 13;	
+	final int PB5 = 14;
+
+	 final int ORBITS1 = 15;
+     final int AGE = 16;
+     final int AGN = 17;
+     final int AGP = 18;
+     final int ORBITS2 = 19;
+     final int PBE = 20;
+     final int PBN = 21;
+     final int PBP = 22;
     
     //private Teapot mTeapot = new Teapot();
     //private Sphere mTeapot = new Sphere(); 
@@ -389,13 +412,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			{
 				// first Ag object in level 1
 				meshObjects.add(AgLvl11);
-				meshTextures.add(mTextures.get(3));
+				meshTextures.add(mTextures.get(AG11));
 				meshTransls.add(new Vector3D(7.0f, 0.0f, 5.0f));
 				meshScales.add(new Vector3D(10.0f, 10.0f, 10.0f));
 				
 				// second Ag object in level 1...
 				meshObjects.add(AgLvl12);
-				meshTextures.add(mTextures.get(4));
+				meshTextures.add(mTextures.get(AG12));
 				meshTransls.add(new Vector3D(0.0f, 2.5f, 10.0f));
 				meshScales.add(new Vector3D(6.0f, 30.0f, 1.0f));
 			}
@@ -403,13 +426,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			{
 				// first Pb object in level 1
 				meshObjects.add(PbLvl11);
-				meshTextures.add(mTextures.get(5));
+				meshTextures.add(mTextures.get(PB11));
 				meshTransls.add(new Vector3D(15.0f, 7.0f, 5.0f));
 				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 				
 				// second Pb object in level 1...
 				meshObjects.add(PbLvl12);
-				meshTextures.add(mTextures.get(6));
+				meshTextures.add(mTextures.get(PB12));
 				meshTransls.add(new Vector3D(-4.0f, 2.5f, 10.0f));
 				meshScales.add(new Vector3D(6.0f, 30.0f, 1.0f));
 			}
@@ -420,7 +443,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			{
 				// first Ag object in level 2
 				meshObjects.add(AgLvl21);
-				meshTextures.add(mTextures.get(7));
+				meshTextures.add(mTextures.get(AG2));
 				meshTransls.add(new Vector3D(0.0f, 2.0f, 10.0f));
 				meshScales.add(new Vector3D(6.0f, 40.0f, 1.0f));			
 			}
@@ -428,7 +451,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			{
 				// first Pb object in level 2
 				meshObjects.add(PbLvl21);
-				meshTextures.add(mTextures.get(8));
+				meshTextures.add(mTextures.get(PB2));
 				meshTransls.add(new Vector3D(-9.0f, 2.0f, 10.0f));
 				meshScales.add(new Vector3D(4.0f, 40.0f, 1.0f));
 				
@@ -443,7 +466,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				meshObjects.add(Ag3_neutrons);
 				meshObjects.add(Ag3_protons);
 				
-				for(int k=15;k<(15+meshCount);++k){
+				for(int k=ORBITS1;k<=AGP;++k){
 					meshTextures.add(mTextures.get(k)); }			
 				for(int a=1;a<=meshCount;++a){
 					meshTransls.add(new Vector3D(17.0f, 5.0f, 5.0f));
@@ -457,7 +480,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 				meshObjects.add(Pb3_neutrons);
 				meshObjects.add(Pb3_protons);
 				
-				for(int k=19;k<(19+meshCount);++k){
+				for(int k=ORBITS2;k<=PBP;++k){
 					meshTextures.add(mTextures.get(k)); }			
 				for(int a=1;a<=meshCount;++a){
 					meshTransls.add(new Vector3D(0.0f, 5.0f, 5.0f));
@@ -469,14 +492,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			{
 				// first Ag object in level 4
 				meshObjects.add(AgLvl41);
-				meshTextures.add(mTextures.get(11));
+				meshTextures.add(mTextures.get(AG4));
 				meshTransls.add(new Vector3D(0.0f, 2.0f, 10.0f));
 				meshScales.add(new Vector3D(6.0f, 40.0f, 1.0f));				
 			}
 			else // Pb
 			{
 				meshObjects.add(PbLvl41);
-				meshTextures.add(mTextures.get(12));
+				meshTextures.add(mTextures.get(PB4));
 				meshTransls.add(new Vector3D(-9.0f, 2.2f, 10.0f));
 				meshScales.add(new Vector3D(2.5f, 30.0f, 1.0f));
 			}
@@ -485,14 +508,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			if(elementIndex == 0) // Ag
 			{
 				meshObjects.add(AgLvl51);
-				meshTextures.add(mTextures.get(13));
+				meshTextures.add(mTextures.get(AG5));
 				meshTransls.add(new Vector3D(0.0f, 2.0f, 10.0f));
 				meshScales.add(new Vector3D(6.0f, 40.0f, 1.0f));
 			}
 			else // Pb
 			{
 				meshObjects.add(PbLvl51);
-				meshTextures.add(mTextures.get(14));
+				meshTextures.add(mTextures.get(PB5));
 				meshTransls.add(new Vector3D(-9.0f, 2.2f, 10.0f));
 				meshScales.add(new Vector3D(2.5f, 30.0f, 1.0f));
 			}
@@ -596,14 +619,14 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	switch(elementIndex)
         	{
         	case 0: // Ag group
-        		groupTexture = 0;
+        		groupTexture = AGG;
         		tx = -22.5f;
         		ty = 19f;
         		sx = 147.0f;
         		sy = 64.0f; 
         		break;
         	case 1: // Pb group
-        		groupTexture = 1;
+        		groupTexture = PBG;
         		tx = 78.0f;
         		ty = 33.5f;
         		sx = 58.0f;
@@ -874,7 +897,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	float sy = 20.0f;
         	float sz = 1.0f;
         	
-        	int selectionTexture = 2;
+        	int selectionTexture = BUTTONSELECTION;
         	
         	Plane selectionPlane = new Plane();
         	TrackableResult trackableResult = state.getTrackableResult(0);
