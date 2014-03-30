@@ -159,7 +159,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     // Log File Variables
     String participant = AboutScreen.message;
-    String filename = participant.replace(" ", "");
+    String filename = "ID"+participant.replace(" ", "");
 	//Calendar cal = Calendar.getInstance();
     
     public VirtualButtonRenderer(VirtualButtons activity,
