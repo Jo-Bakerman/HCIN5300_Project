@@ -42,6 +42,7 @@ import com.qualcomm.vuforia.CameraCalibration;
 import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.ImageTargetResult;
 import com.qualcomm.vuforia.Matrix34F;
+import com.qualcomm.vuforia.Matrix44F;
 import com.qualcomm.vuforia.Rectangle;
 import com.qualcomm.vuforia.Renderer;
 import com.qualcomm.vuforia.State;
@@ -371,7 +372,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             
             if(touchPending)
             {
-            	ProcessTouch(state);
+            	ProcessTouch(trackableResult);
             	touchPending = false;
             }
                                 
@@ -385,6 +386,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
                                   position.getData()[1] * position.getData()[1] +
                                   position.getData()[2] * position.getData()[2]);
             //Log.d("distance: %f", Float.toString(distance));
+            
             if((distance > camDist) && !buttonsEnabled)
             {
             	mActivity.toggleButtons();
@@ -395,9 +397,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             	if((distance <= camDist) && buttonsEnabled)
             	{
             		mActivity.toggleButtons();
-            		buttonsEnabled = false;
+            		buttonsEnabled  = false;
             	}
             }
+            
             }
             
             // Set the texture used for the teapot model:
@@ -720,7 +723,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		currLevel = 1; // reset to level 1
     		if(elementIndex == -1){
     			mActivity.ElementIsSelected();
-    			buttonsEnabled = true;
     			// Add Selected Element to File
     			try
     	        {
@@ -740,7 +742,6 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		currLevel = 1; // reset to level 1
     		if(elementIndex == -1){
     			mActivity.ElementIsSelected();
-    			buttonsEnabled = true;
     			// Add Selected Element to File
     			try
     	        {
@@ -1032,27 +1033,38 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         }
     }
     
-    public void ProcessTouch(State state)
+    public void ProcessTouch(TrackableResult tr)//(State state)
     {
     	float getX = xx;
 		float getY = yy;
-		boolean isPort = mActivity.getResources().getConfiguration().orientation == 
-				Configuration.ORIENTATION_PORTRAIT;
-		// Get the trackable:
-        TrackableResult trackableResult = state.getTrackableResult(0);                
-        // The image target specific result:
-        assert (trackableResult.getType() == ImageTargetResult
-            .getClassType());                
-        CameraCalibration cc = CameraDevice.getInstance()
-	            .getCameraCalibration();                
-        Matrix34F pose = trackableResult.getPose();
-        
-		System.out.println("touch coordinates: ("+getX+", "+getY+")");
+//		boolean isPort = mActivity.getResources().getConfiguration().orientation == 
+//				Configuration.ORIENTATION_PORTRAIT;
+//		// Get the trackable:
+//        TrackableResult trackableResult = state.getTrackableResult(0);                
+//        // The image target specific result:
+//        assert (trackableResult.getType() == ImageTargetResult
+//            .getClassType());                
+//        CameraCalibration cc = CameraDevice.getInstance()
+//	            .getCameraCalibration();                
+//        Matrix34F pose = trackableResult.getPose();   
 		
-		Vec2F dist = new Vec2F((agC.right-agC.left), (agC.top-agC.bottom));
-		System.out.print("center: (");  		
-		TouchProcess.fromCameraToScreen(isPort, 
-				dist.getData()[0], dist.getData()[1], mActivity, cc, pose);    
+		 Matrix44F modelViewMatrix = Tool
+	                .convertPose2GLMatrix(tr.getPose());
+		
+//		Vec2F dist = new Vec2F(agC.left+7, agC.bottom+7);
+//		Vec2F dist2 = new Vec2F(pbC.left+7, pbC.bottom+7);
+//		System.out.println("Ag button center: ("+dist.getData()[0]+", "+dist.getData()[1]+")");
+//		System.out.println("Pb button center: ("+dist2.getData()[0]+", "+dist2.getData()[1]+")");
+//		System.out.print("projected touch: (");  		
+		int getResult = TouchProcess.isTapOnScreenInsideTarget
+			(getX, getY, mActivity, vuforiaAppSession, modelViewMatrix); 
+		if(getResult == 1)
+			buttonSelection(0);
+		else
+		{
+			if(getResult == 2)
+				buttonSelection(1);
+		}
     }
     
     public boolean onTouchEvent(MotionEvent e) {

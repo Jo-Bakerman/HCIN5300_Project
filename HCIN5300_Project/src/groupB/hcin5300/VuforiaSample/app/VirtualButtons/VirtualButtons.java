@@ -144,14 +144,6 @@ public class VirtualButtons extends Activity implements
     	// disable element buttons
     	addButtonToToggle(0);
         addButtonToToggle(1);
-    	
-        // enable level buttons 
-        addButtonToToggle(2);
-        addButtonToToggle(3);
-        addButtonToToggle(4);
-        addButtonToToggle(5);
-        addButtonToToggle(6);
-               
     }
     
     public void toggleButtons()
