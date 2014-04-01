@@ -15,10 +15,13 @@ import java.util.Vector;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.view.MotionEvent;
 
 //import java.io.File;
 //import java.io.BufferedReader;
@@ -35,13 +38,18 @@ import android.os.Environment;
 //import android.widget.EditText;
 
 import com.qualcomm.vuforia.Area;
+import com.qualcomm.vuforia.CameraCalibration;
+import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.ImageTargetResult;
+import com.qualcomm.vuforia.Matrix34F;
 import com.qualcomm.vuforia.Rectangle;
 import com.qualcomm.vuforia.Renderer;
 import com.qualcomm.vuforia.State;
 import com.qualcomm.vuforia.Tool;
 import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
+import com.qualcomm.vuforia.Vec2F;
+import com.qualcomm.vuforia.Vec3F;
 import com.qualcomm.vuforia.VirtualButton;
 import com.qualcomm.vuforia.VirtualButtonResult;
 import com.qualcomm.vuforia.Vuforia;
@@ -115,6 +123,13 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     public boolean elementSelected = false;
     int elementIndex = -1;
     int currLevel = -1;
+    
+    public boolean buttonsEnabled = false;
+    public float camDist = 300; //minimum distance to enable buttons
+    
+    public boolean touchPending = false;
+    public float xx;
+    public float yy;
     
     // Ag objects
     //MeshObject AgLvl11;
@@ -347,12 +362,43 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         if (state.getNumTrackableResults() > 0)
         {
             // Get the trackable:
-            TrackableResult trackableResult = state.getTrackableResult(0);           
+            TrackableResult trackableResult = state.getTrackableResult(0);   
+            
             
             // The image target specific result:
             assert (trackableResult.getType() == ImageTargetResult
                 .getClassType());
+            
+            if(touchPending)
+            {
+            	ProcessTouch(state);
+            	touchPending = false;
+            }
                                 
+            
+            if(elementSelected)
+            {
+            Matrix34F pose = trackableResult.getPose();        
+            Vec3F position = new Vec3F
+            		(pose.getData()[3], pose.getData()[7], pose.getData()[11]);
+            float distance = (float) Math.sqrt(position.getData()[0] * position.getData()[0] +
+                                  position.getData()[1] * position.getData()[1] +
+                                  position.getData()[2] * position.getData()[2]);
+            //Log.d("distance: %f", Float.toString(distance));
+            if((distance > camDist) && !buttonsEnabled)
+            {
+            	mActivity.toggleButtons();
+            	buttonsEnabled = true;
+            }
+            else
+            {
+            	if((distance <= camDist) && buttonsEnabled)
+            	{
+            		mActivity.toggleButtons();
+            		buttonsEnabled = false;
+            	}
+            }
+            }
             
             // Set the texture used for the teapot model:
             //int textureIndex = 0;
@@ -674,6 +720,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		currLevel = 1; // reset to level 1
     		if(elementIndex == -1){
     			mActivity.ElementIsSelected();
+    			buttonsEnabled = true;
     			// Add Selected Element to File
     			try
     	        {
@@ -693,6 +740,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     		currLevel = 1; // reset to level 1
     		if(elementIndex == -1){
     			mActivity.ElementIsSelected();
+    			buttonsEnabled = true;
     			// Add Selected Element to File
     			try
     	        {
@@ -983,5 +1031,38 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         	Log.e("FileWriter","Did Not Create File2");
         }
     }
+    
+    public void ProcessTouch(State state)
+    {
+    	float getX = xx;
+		float getY = yy;
+		boolean isPort = mActivity.getResources().getConfiguration().orientation == 
+				Configuration.ORIENTATION_PORTRAIT;
+		// Get the trackable:
+        TrackableResult trackableResult = state.getTrackableResult(0);                
+        // The image target specific result:
+        assert (trackableResult.getType() == ImageTargetResult
+            .getClassType());                
+        CameraCalibration cc = CameraDevice.getInstance()
+	            .getCameraCalibration();                
+        Matrix34F pose = trackableResult.getPose();
+        
+		System.out.println("touch coordinates: ("+getX+", "+getY+")");
+		
+		Vec2F dist = new Vec2F((agC.right-agC.left), (agC.top-agC.bottom));
+		System.out.print("center: (");  		
+		TouchProcess.fromCameraToScreen(isPort, 
+				dist.getData()[0], dist.getData()[1], mActivity, cc, pose);    
+    }
+    
+    public boolean onTouchEvent(MotionEvent e) {
+    	if(!elementSelected)
+    	{
+    		xx = e.getX();
+    		yy = e.getY();
+    		touchPending = true;
+    	}
+    	return true;
+	}
 }
 

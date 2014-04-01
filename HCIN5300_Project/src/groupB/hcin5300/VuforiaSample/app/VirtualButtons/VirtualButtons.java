@@ -154,6 +154,15 @@ public class VirtualButtons extends Activity implements
                
     }
     
+    public void toggleButtons()
+    {
+        addButtonToToggle(2);
+        addButtonToToggle(3);
+        addButtonToToggle(4);
+        addButtonToToggle(5);
+        addButtonToToggle(6);
+    }
+    
     // Process Single Tap event to trigger autofocus
     private class GestureListener extends
         GestureDetector.SimpleOnGestureListener
@@ -375,11 +384,15 @@ public class VirtualButtons extends Activity implements
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        // Process the Gestures
-        if (mSampleAppMenu != null && mSampleAppMenu.processEvent(event))
-            return true;
-        
-        return mGestureDetector.onTouchEvent(event);
+//        // Process the Gestures
+//        if (mSampleAppMenu != null && mSampleAppMenu.processEvent(event))
+//            return true;
+//        
+//        return mGestureDetector.onTouchEvent(event);
+    	if(mRenderer != null)
+    		return mRenderer.onTouchEvent(event);
+    	
+    	return true;
     }
     
     
@@ -985,4 +998,5 @@ public class VirtualButtons extends Activity implements
     {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
+       
 }
