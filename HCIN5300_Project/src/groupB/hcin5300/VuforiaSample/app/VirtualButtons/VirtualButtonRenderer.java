@@ -69,6 +69,7 @@ import groupB.hcin5300.SampleApplication.utils.Cube;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.SampleApplication.utils.Vector3D;
 import groupB.hcin5300.VuforiaSample.ui.ActivityList.AboutScreen;
+import groupB.hcin5300.VuforiaSample.ui.ActivityList.ActivitySplashScreen;
 
 
 public class VirtualButtonRenderer implements GLSurfaceView.Renderer
@@ -198,24 +199,43 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     public void loadElementSpecs()
     {
     	//AgLvl11 = new Cube(); // placeholder
-    	AgLvl12 = new ImportedMesh("Planes/ag-level1", mActivity);
-    	AgLvl21 = new ImportedMesh("Planes/ag-level2", mActivity);
-    	Ag3_orbits = new ImportedMesh("Bohr/Ag/orbits", mActivity);
-    	Ag3_electrons = new ImportedMesh("Bohr/Ag/electrons", mActivity);
-    	Ag3_neutrons = new ImportedMesh("Bohr/Ag/neutrons", mActivity);
-    	Ag3_protons = new ImportedMesh("Bohr/Ag/protons", mActivity);
-    	AgLvl41 = new ImportedMesh("Planes/ag-level4", mActivity);
-    	AgLvl51 = new ImportedMesh("Planes/ag-level5", mActivity);
+//    	AgLvl12 = new ImportedMesh("Planes/ag-level1", mActivity);
+//    	AgLvl21 = new ImportedMesh("Planes/ag-level2", mActivity);
+//    	Ag3_orbits = new ImportedMesh("Bohr/Ag/orbits", mActivity);
+//    	Ag3_electrons = new ImportedMesh("Bohr/Ag/electrons", mActivity);
+//    	Ag3_neutrons = new ImportedMesh("Bohr/Ag/neutrons", mActivity);
+//    	Ag3_protons = new ImportedMesh("Bohr/Ag/protons", mActivity);
+//    	AgLvl41 = new ImportedMesh("Planes/ag-level4", mActivity);
+//    	AgLvl51 = new ImportedMesh("Planes/ag-level5", mActivity);
+//    	
+//    	//PbLvl11 = new Sphere(); // placeholder
+//    	PbLvl12 = new ImportedMesh("Planes/pb-level1", mActivity);
+//    	PbLvl21 = new ImportedMesh("Planes/pb-level2", mActivity);
+//    	Pb3_orbits = new ImportedMesh("Bohr/Pb/orbits", mActivity);
+//    	Pb3_electrons = new ImportedMesh("Bohr/Pb/electrons", mActivity);
+//    	Pb3_neutrons = new ImportedMesh("Bohr/Pb/neutrons", mActivity);
+//    	Pb3_protons = new ImportedMesh("Bohr/Pb/protons", mActivity);
+//    	PbLvl41 = new ImportedMesh("Planes/pb-level4", mActivity);
+//    	PbLvl51 = new ImportedMesh("Planes/pb-level5", mActivity);
+    	AgLvl12 = ActivitySplashScreen.AgLvl12;
+    	AgLvl21 = ActivitySplashScreen.AgLvl21;
+    	Ag3_orbits = ActivitySplashScreen.Ag3_orbits;
+    	Ag3_electrons = ActivitySplashScreen.Ag3_electrons;
+    	Ag3_neutrons = ActivitySplashScreen.Ag3_neutrons;
+    	Ag3_protons = ActivitySplashScreen.Ag3_protons;
+    	AgLvl41 = ActivitySplashScreen.AgLvl41;
+    	AgLvl51 = ActivitySplashScreen.AgLvl51;
     	
     	//PbLvl11 = new Sphere(); // placeholder
-    	PbLvl12 = new ImportedMesh("Planes/pb-level1", mActivity);
-    	PbLvl21 = new ImportedMesh("Planes/pb-level2", mActivity);
-    	Pb3_orbits = new ImportedMesh("Bohr/Pb/orbits", mActivity);
-    	Pb3_electrons = new ImportedMesh("Bohr/Pb/electrons", mActivity);
-    	Pb3_neutrons = new ImportedMesh("Bohr/Pb/neutrons", mActivity);
-    	Pb3_protons = new ImportedMesh("Bohr/Pb/protons", mActivity);
-    	PbLvl41 = new ImportedMesh("Planes/pb-level4", mActivity);
-    	PbLvl51 = new ImportedMesh("Planes/pb-level5", mActivity);
+    	PbLvl12 = ActivitySplashScreen.PbLvl12;
+    	PbLvl21 = ActivitySplashScreen.PbLvl21;
+    	Pb3_orbits = ActivitySplashScreen.Pb3_orbits;
+    	Pb3_electrons = ActivitySplashScreen.Pb3_electrons;
+    	Pb3_neutrons = ActivitySplashScreen.Pb3_neutrons;
+    	Pb3_protons = ActivitySplashScreen.Pb3_protons;
+    	PbLvl41 = ActivitySplashScreen.PbLvl41;
+    	PbLvl51 = ActivitySplashScreen.PbLvl51;
+
     }
     
     // Called when the surface is created or recreated.

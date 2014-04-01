@@ -50,6 +50,8 @@ import groupB.hcin5300.SampleApplication.utils.LoadingDialogHandler;
 import groupB.hcin5300.SampleApplication.utils.SampleApplicationGLView;
 import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.VuforiaSample.R;
+import groupB.hcin5300.VuforiaSample.ui.ActivityList.AboutScreen;
+import groupB.hcin5300.VuforiaSample.ui.ActivityList.ActivitySplashScreen;
 import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenu;
 import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenuGroup;
 import groupB.hcin5300.VuforiaSample.ui.SampleAppMenu.SampleAppMenuInterface;
@@ -83,7 +85,7 @@ public class VirtualButtons extends Activity implements
         this);
     
     // The textures we will use for rendering:
-    private Vector<Texture> mTextures;
+    //private Vector<Texture> mTextures;
     
     private DataSet dataSet = null;
     
@@ -122,8 +124,8 @@ public class VirtualButtons extends Activity implements
             .initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
         // Load any sample specific textures:
-        mTextures = new Vector<Texture>();
-        loadTextures();
+//        mTextures = new Vector<Texture>();
+//        loadTextures();
         
         mGestureDetector = new GestureDetector(this, new GestureListener());
         
@@ -194,78 +196,78 @@ public class VirtualButtons extends Activity implements
     
     // We want to load specific textures from the APK, which we will later use
     // for rendering.
-    private void loadTextures()
-    {
-    	mTextures.add(Texture.loadTextureFromApk("Groups/Ag-Group.png",
-                getAssets())); // 0
-        
-        mTextures.add(Texture.loadTextureFromApk("Groups/Pb-Group.png",
-                getAssets())); // 1
-        
-        mTextures.add(Texture.loadTextureFromApk("VirtualButtons/button-selection.png",
-                getAssets())); // 2       
-        
-        //level 1 textures
-    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereRed.png",
-                getAssets())); // 3
-    	
-        mTextures.add(Texture.loadTextureFromApk("Planes/ag-level1/ag-level1.png",
-                getAssets())); // 4
-        
-        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
-                getAssets())); // 5   
-        
-        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level1/pb-level1.png",
-                getAssets())); // 6
-        
-        //level 2 textures
-        mTextures.add(Texture.loadTextureFromApk("Planes/ag-level2/ag-level2.png",
-                getAssets())); // 7
-        
-        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level2/pb-level2.png",
-                getAssets())); // 8
-    	
-        //level 3 textures
-    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSpherePurple.png",
-                getAssets())); // 9
-    	
-    	mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereOrange.png",
-                getAssets())); // 10
-    	
-    	//level 4 textures
-    	mTextures.add(Texture.loadTextureFromApk("Planes/ag-level4/ag-level4.png",
-                getAssets())); // 11
-    	
-    	mTextures.add(Texture.loadTextureFromApk("Planes/pb-level4/pb-level4.png",
-                getAssets())); // 12
-    	
-    	//level 5 textures
-    	mTextures.add(Texture.loadTextureFromApk("Planes/ag-level5/ag-level5.png",
-                getAssets())); // 13
-       
-       mTextures.add(Texture.loadTextureFromApk("Planes/pb-level5/pb-level5.png",
-               getAssets())); // 14
-       
-       // Bohr Model
-       // Ag
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/orbits.jpg",
-               getAssets())); // 15
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/electrons.jpg",
-               getAssets())); // 16
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/neutrons.jpg",
-               getAssets())); // 17
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/protons.jpg",
-               getAssets())); // 18      
-       // Pb
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/orbits.jpg",
-               getAssets())); // 19
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/electrons.jpg",
-               getAssets())); // 20
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/neutrons.jpg",
-               getAssets())); // 21
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/protons.jpg",
-               getAssets())); // 22
-    }   
+//    private void loadTextures()
+//    {
+//    	mTextures.add(Texture.loadTextureFromApk("Groups/Ag-Group.png",
+//                getAssets())); // 0
+//        
+//        mTextures.add(Texture.loadTextureFromApk("Groups/Pb-Group.png",
+//                getAssets())); // 1
+//        
+//        mTextures.add(Texture.loadTextureFromApk("VirtualButtons/button-selection.png",
+//                getAssets())); // 2       
+//        
+//        //level 1 textures
+//    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSphereRed.png",
+//                getAssets())); // 3
+//    	
+//        mTextures.add(Texture.loadTextureFromApk("Planes/ag-level1/ag-level1.png",
+//                getAssets())); // 4
+//        
+//        mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereBlue.png",
+//                getAssets())); // 5   
+//        
+//        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level1/pb-level1.png",
+//                getAssets())); // 6
+//        
+//        //level 2 textures
+//        mTextures.add(Texture.loadTextureFromApk("Planes/ag-level2/ag-level2.png",
+//                getAssets())); // 7
+//        
+//        mTextures.add(Texture.loadTextureFromApk("Planes/pb-level2/pb-level2.png",
+//                getAssets())); // 8
+//    	
+//        //level 3 textures
+//    	mTextures.add(Texture.loadTextureFromApk("Ag/TextureSpherePurple.png",
+//                getAssets())); // 9
+//    	
+//    	mTextures.add(Texture.loadTextureFromApk("Pb/TextureSphereOrange.png",
+//                getAssets())); // 10
+//    	
+//    	//level 4 textures
+//    	mTextures.add(Texture.loadTextureFromApk("Planes/ag-level4/ag-level4.png",
+//                getAssets())); // 11
+//    	
+//    	mTextures.add(Texture.loadTextureFromApk("Planes/pb-level4/pb-level4.png",
+//                getAssets())); // 12
+//    	
+//    	//level 5 textures
+//    	mTextures.add(Texture.loadTextureFromApk("Planes/ag-level5/ag-level5.png",
+//                getAssets())); // 13
+//       
+//       mTextures.add(Texture.loadTextureFromApk("Planes/pb-level5/pb-level5.png",
+//               getAssets())); // 14
+//       
+//       // Bohr Model
+//       // Ag
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/orbits.jpg",
+//               getAssets())); // 15
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/electrons.jpg",
+//               getAssets())); // 16
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/neutrons.jpg",
+//               getAssets())); // 17
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/protons.jpg",
+//               getAssets())); // 18      
+//       // Pb
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/orbits.jpg",
+//               getAssets())); // 19
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/electrons.jpg",
+//               getAssets())); // 20
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/neutrons.jpg",
+//               getAssets())); // 21
+//       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/protons.jpg",
+//               getAssets())); // 22
+//    }   
     
     // Called when the activity will start interacting with the user.
     @Override
@@ -367,8 +369,8 @@ public class VirtualButtons extends Activity implements
         }
         
         // Unload texture:
-        mTextures.clear();
-        mTextures = null;
+        //mTextures.clear();
+        //mTextures = null;
         
         System.gc();
     }
@@ -423,7 +425,7 @@ public class VirtualButtons extends Activity implements
         mGlView.init(translucent, depthSize, stencilSize);
         
         mRenderer = new VirtualButtonRenderer(this, vuforiaAppSession);
-        mRenderer.setTextures(mTextures);
+        mRenderer.setTextures(ActivitySplashScreen.mTextures);
         mGlView.setRenderer(mRenderer);
         
     }

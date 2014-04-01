@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Vector;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +24,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import groupB.hcin5300.SampleApplication.utils.ImportedMesh;
+import groupB.hcin5300.SampleApplication.utils.MeshObject;
+import groupB.hcin5300.SampleApplication.utils.Texture;
 import groupB.hcin5300.VuforiaSample.R;
 
 
@@ -38,7 +42,7 @@ public class AboutScreen extends Activity implements OnClickListener
     private EditText mEditText;
     
     public static String message;
-    
+
     
     @Override
     public void onCreate(Bundle savedInstanceState)
