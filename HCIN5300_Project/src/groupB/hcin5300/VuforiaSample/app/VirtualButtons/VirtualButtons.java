@@ -247,22 +247,22 @@ public class VirtualButtons extends Activity implements
        
        // Bohr Model
        // Ag
-       mTextures.add(Texture.loadTextureFromApk("Bohr/orbits.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/orbits.jpg",
                getAssets())); // 15
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/electrons.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/electrons.jpg",
                getAssets())); // 16
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/neutrons.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/neutrons.jpg",
                getAssets())); // 17
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/protons.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Ag/protons.jpg",
                getAssets())); // 18      
        // Pb
-       mTextures.add(Texture.loadTextureFromApk("Bohr/orbits.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/orbits.jpg",
                getAssets())); // 19
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/electrons.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/electrons.jpg",
                getAssets())); // 20
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/neutrons.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/neutrons.jpg",
                getAssets())); // 21
-       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/protons.png",
+       mTextures.add(Texture.loadTextureFromApk("Bohr/Pb/protons.jpg",
                getAssets())); // 22
     }   
     

@@ -117,7 +117,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     int currLevel = -1;
     
     // Ag objects
-    MeshObject AgLvl11;
+    //MeshObject AgLvl11;
     MeshObject AgLvl12;
     MeshObject AgLvl21;
     MeshObject Ag3_orbits;
@@ -128,7 +128,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     MeshObject AgLvl51;
     
     // Pb objects
-    MeshObject PbLvl11;
+    //MeshObject PbLvl11;
     MeshObject PbLvl12;
     MeshObject PbLvl21;
     MeshObject Pb3_orbits;
@@ -181,7 +181,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     
     public void loadElementSpecs()
     {
-    	AgLvl11 = new Cube(); // placeholder
+    	//AgLvl11 = new Cube(); // placeholder
     	AgLvl12 = new ImportedMesh("Planes/ag-level1", mActivity);
     	AgLvl21 = new ImportedMesh("Planes/ag-level2", mActivity);
     	Ag3_orbits = new ImportedMesh("Bohr/Ag/orbits", mActivity);
@@ -191,7 +191,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
     	AgLvl41 = new ImportedMesh("Planes/ag-level4", mActivity);
     	AgLvl51 = new ImportedMesh("Planes/ag-level5", mActivity);
     	
-    	PbLvl11 = new Sphere(); // placeholder
+    	//PbLvl11 = new Sphere(); // placeholder
     	PbLvl12 = new ImportedMesh("Planes/pb-level1", mActivity);
     	PbLvl21 = new ImportedMesh("Planes/pb-level2", mActivity);
     	Pb3_orbits = new ImportedMesh("Bohr/Pb/orbits", mActivity);
@@ -411,10 +411,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			if(elementIndex == 0) // Ag
 			{
 				// first Ag object in level 1
-				meshObjects.add(AgLvl11);
-				meshTextures.add(mTextures.get(AG11));
-				meshTransls.add(new Vector3D(7.0f, 0.0f, 5.0f));
-				meshScales.add(new Vector3D(10.0f, 10.0f, 10.0f));
+//				meshObjects.add(AgLvl11);
+//				meshTextures.add(mTextures.get(AG11));
+//				meshTransls.add(new Vector3D(7.0f, 0.0f, 5.0f));
+//				meshScales.add(new Vector3D(10.0f, 10.0f, 10.0f));
 				
 				// second Ag object in level 1...
 				meshObjects.add(AgLvl12);
@@ -425,10 +425,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
 			else // Pb
 			{
 				// first Pb object in level 1
-				meshObjects.add(PbLvl11);
-				meshTextures.add(mTextures.get(PB11));
-				meshTransls.add(new Vector3D(15.0f, 7.0f, 5.0f));
-				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
+//				meshObjects.add(PbLvl11);
+//				meshTextures.add(mTextures.get(PB11));
+//				meshTransls.add(new Vector3D(15.0f, 7.0f, 5.0f));
+//				meshScales.add(new Vector3D(6.0f, 6.0f, 6.0f));
 				
 				// second Pb object in level 1...
 				meshObjects.add(PbLvl12);

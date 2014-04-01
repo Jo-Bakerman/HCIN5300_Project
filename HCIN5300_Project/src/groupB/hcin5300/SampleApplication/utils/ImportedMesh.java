@@ -152,10 +152,12 @@ public class ImportedMesh extends MeshObject {
 			while ((sCurrentLine = br.readLine()) != null) {
 				String[] ss = sCurrentLine.split("\\s+");
 
+				if(!(ss[0].equalsIgnoreCase("s"))){
 				for(int m=1;m<ss.length;++m)
 				{
 					String[] cc = ss[m].split("/");
 					getValues.add(Short.parseShort(cc[0]));
+				}
 				}
 			}
 
