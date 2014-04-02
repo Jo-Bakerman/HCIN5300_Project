@@ -191,9 +191,7 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
         vbRectangle[3] = new Rectangle(l2C.left, l2C.top, l2C.right, l2C.bottom);
         vbRectangle[4] = new Rectangle(l3C.left, l3C.top, l3C.right, l3C.bottom);
         vbRectangle[5] = new Rectangle(l4C.left, l4C.top, l4C.right, l4C.bottom);  
-        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom);       
-           
-        loadElementSpecs();            
+        vbRectangle[6] = new Rectangle(l5C.left, l5C.top, l5C.right, l5C.bottom); 
     } 
     
     public void loadElementSpecs()
@@ -285,6 +283,10 @@ public class VirtualButtonRenderer implements GLSurfaceView.Renderer
             : 1.0f);
         
         // Now generate the OpenGL texture objects and add settings
+        loadElementSpecs(); 
+        mTextures = null;
+        mTextures = new Vector<Texture>();
+        setTextures(ActivitySplashScreen.mTextures);
         for (Texture t : mTextures)
         {
             GLES20.glGenTextures(1, t.mTextureID, 0);

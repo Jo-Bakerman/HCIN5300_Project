@@ -425,7 +425,7 @@ public class VirtualButtons extends Activity implements
         mGlView.init(translucent, depthSize, stencilSize);
         
         mRenderer = new VirtualButtonRenderer(this, vuforiaAppSession);
-        mRenderer.setTextures(ActivitySplashScreen.mTextures);
+        //mRenderer.setTextures(ActivitySplashScreen.mTextures);
         mGlView.setRenderer(mRenderer);
         
     }
